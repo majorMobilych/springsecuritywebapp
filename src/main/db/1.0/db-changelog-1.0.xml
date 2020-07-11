@@ -1,0 +1,139 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd"
+                   objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
+
+    <!-- CREATE TABLE USERS -->
+    <changeSet id="1.0.0" author="mihovel">
+        <createTable tableName="users">
+            <column name="created" type="TIMESTAMP" defaultValue="NOW()">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="updated" type="TIMESTAMP" defaultValue="NOW()">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="status" type="VARCHAR(32)" defaultValue="valid">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="email" type="VARCHAR(256)">
+                <constraints unique="true" nullable="false"/>
+            </column>
+
+            <column name="name" type="VARCHAR(32)">
+                <constraints primaryKey="true"/>
+            </column>
+
+            <column name="password" type="VARCHAR(60)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <!-- CREATE TABLE ROLES -->
+    <changeSet id="1.0.1" author="mihovel">
+        <createTable tableName="roles">
+            <column name="created" type="TIMESTAMP" defaultValue="NOW()">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="updated" type="TIMESTAMP" defaultValue="NOW()">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="status" type="VARCHAR(32)" defaultValue="valid">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="role" type="VARCHAR(32)">
+                <constraints primaryKey="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <!-- CREATE TABLE USERS_TO_ROLES -->
+    <changeSet id="1.0.2" author="mihovel">
+        <createTable tableName="users_to_roles">
+            <column name="username" type="VARCHAR(32)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="rolename" type="VARCHAR(32)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <!-- CREATE TABLE AGENDA -->
+    <changeSet id="1.0.3" author="mihovel">
+        <createTable tableName="agenda">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+
+            <column name="created" type="TIMESTAMP" defaultValue="NOW()">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="updated" type="TIMESTAMP" defaultValue="NOW()">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="status" type="VARCHAR(32)" defaultValue="valid">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="username" type="VARCHAR(32)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="day" type="VARCHAR(9)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="time" type="VARCHAR(5)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="privacy" type="BOOLEAN" defaultValue="FALSE">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="note" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <!-- ADD CONSTRAINTS -->
+    <!--TODO: что такое каскад и рестрикт?-->
+    <changeSet id="1.0.4" author="mihovel">
+        <addForeignKeyConstraint baseTableName="users_to_roles"
+                                 baseColumnNames="username"
+                                 constraintName="fk_users_to_roles_user"
+                                 referencedTableName="users"
+                                 referencedColumnNames="name"
+                                 onDelete="CASCADE"
+                                 onUpdate="RESTRICT"
+        />
+
+        <addForeignKeyConstraint baseTableName="users_to_roles"
+                                 baseColumnNames="rolename"
+                                 constraintName="fk_users_to_roles_roles"
+                                 referencedTableName="roles"
+                                 referencedColumnNames="role"
+                                 onDelete="CASCADE"
+                                 onUpdate="RESTRICT"
+        />
+
+        <addForeignKeyConstraint baseTableName="agenda"
+                                 baseColumnNames="username"
+                                 constraintName="fk_agenda_user"
+                                 referencedTableName="users"
+                                 referencedColumnNames="name"
+        />
+    </changeSet>
+</databaseChangeLog>
