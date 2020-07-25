@@ -99,6 +99,7 @@ public class HibernateConfig {
 
     @Bean
     public HibernateTransactionManager transactionManager() {
+        //
         HibernateTransactionManager transactionManager = new HibernateTransactionManager();
         transactionManager.setSessionFactory(createSessionFactory());
         return transactionManager;
