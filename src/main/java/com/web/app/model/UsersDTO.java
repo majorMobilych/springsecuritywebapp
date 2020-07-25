@@ -12,11 +12,11 @@ import java.util.Set;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @AllArgsConstructor
 public class UsersDTO {
-    private Long id;
+    private String name;
     private String email;
     private Set<AgendaEntity> agendaEntities;
 
     public static UsersDTO EntityToDTO(UsersEntity usersEntity) {
-        return new UsersDTO(usersEntity.getId(), usersEntity.getEmail(), usersEntity.getAgendas());
+        return new UsersDTO(usersEntity.getName(), usersEntity.getEmail(), usersEntity.getAgendas());
     }
 }

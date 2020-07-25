@@ -2,11 +2,10 @@ package com.web.app.service.impl;
 
 import com.web.app.entity.AgendaEntity;
 import com.web.app.entity.RolesEntity;
-import com.web.app.entity.Status;
 import com.web.app.entity.UsersEntity;
-import com.web.app.repository.AgendaRepository;
-import com.web.app.repository.RolesRepository;
-import com.web.app.repository.UsersRepository;
+import com.web.app.repository.springdata.AgendaRepository;
+import com.web.app.repository.springdata.RolesRepository;
+import com.web.app.repository.springdata.UsersRepository;
 import com.web.app.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +53,7 @@ public class UserServiceImpl implements UserService {
         if (isUserValidForSaving(usersEntity)) {
             usersEntity.setPassword(passwordEncoder.encode(usersEntity.getPassword()));
             usersEntity.setRoles(userRoles);
-            usersEntity.setStatus(Status.valid);
+            usersEntity.setValidity(true);
 
             //TODO: есть метод save() в CrudRepository, а есть saveAndFlush() в JpaRepository. В чем разница?
             // + подробнее про флаш

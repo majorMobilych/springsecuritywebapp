@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -19,17 +20,14 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
-import java.util.Base64;
-import java.util.Date;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
 @PropertySource("properties/jwt.properties")
 public class JwtProviderImpl implements JwtProvider {
-    private final UserDetailsService userDetailsService;
 
-    private final int TOKEN_LENGTH = 7;
+    private final UserDetailsService userDetailsService;
 
     @Autowired
     public JwtProviderImpl(@Qualifier("jwtUserDetailsService") UserDetailsService userDetailsService) {
@@ -41,13 +39,14 @@ public class JwtProviderImpl implements JwtProvider {
 
     // TODO: проперти считается и автоматически закастится в лонг?
     @Value("${jwt.token.secret}")
-    private Long validityMillis;
+    private Long validTillMillis;
+
+    private final int TOKEN_LENGTH = 7;
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
 
     @PostConstruct
     protected void init() {
@@ -64,13 +63,13 @@ public class JwtProviderImpl implements JwtProvider {
                 .put("roles", getRoleNames(roles));
 
         Date now = new Date();
-        Date validity = new Date(now.getTime() + validityMillis);
+        Date validTill = new Date(now.getTime() + validTillMillis);
 
         return Jwts
                 .builder()
                 .setClaims(claims)
                 .setIssuedAt(now)
-                .setExpiration(validity)
+                .setExpiration(validTill)
                 .signWith(SignatureAlgorithm.HS256, secret)
                 .compact();
     }

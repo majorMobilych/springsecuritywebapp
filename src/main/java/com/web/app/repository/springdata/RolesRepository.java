@@ -1,4 +1,4 @@
-package com.web.app.repository;
+package com.web.app.repository.springdata;
 
 import com.web.app.entity.RolesEntity;
 import org.springframework.data.jpa.repository.JpaRepository;

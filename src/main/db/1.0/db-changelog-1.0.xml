@@ -7,6 +7,10 @@
     <!-- CREATE TABLE USERS -->
     <changeSet id="1.0.0" author="mihovel">
         <createTable tableName="users">
+            <column name="id" type="SERIAL">
+                <constraints primaryKey="true"/>
+            </column>
+
             <column name="created" type="TIMESTAMP" defaultValue="NOW()">
                 <constraints nullable="false"/>
             </column>
@@ -15,7 +19,7 @@
                 <constraints nullable="false"/>
             </column>
 
-            <column name="status" type="VARCHAR(32)" defaultValue="valid">
+            <column name="validity" type="BOOLEAN" defaultValue="TRUE">
                 <constraints nullable="false"/>
             </column>
 
@@ -24,7 +28,7 @@
             </column>
 
             <column name="name" type="VARCHAR(32)">
-                <constraints primaryKey="true"/>
+                <constraints unique="true" nullable="false"/>
             </column>
 
             <column name="password" type="VARCHAR(60)">
@@ -36,6 +40,10 @@
     <!-- CREATE TABLE ROLES -->
     <changeSet id="1.0.1" author="mihovel">
         <createTable tableName="roles">
+            <column name="id" type="SERIAL">
+                <constraints primaryKey="true"/>
+            </column>
+
             <column name="created" type="TIMESTAMP" defaultValue="NOW()">
                 <constraints nullable="false"/>
             </column>
@@ -44,12 +52,8 @@
                 <constraints nullable="false"/>
             </column>
 
-            <column name="status" type="VARCHAR(32)" defaultValue="valid">
-                <constraints nullable="false"/>
-            </column>
-
             <column name="role" type="VARCHAR(32)">
-                <constraints primaryKey="true"/>
+                <constraints unique="true" nullable="false"/>
             </column>
         </createTable>
     </changeSet>
@@ -57,20 +61,20 @@
     <!-- CREATE TABLE USERS_TO_ROLES -->
     <changeSet id="1.0.2" author="mihovel">
         <createTable tableName="users_to_roles">
-            <column name="username" type="VARCHAR(32)">
+            <column name="usersid" type="SERIAL">
                 <constraints nullable="false"/>
             </column>
 
-            <column name="rolename" type="VARCHAR(32)">
+            <column name="rolesid" type="SERIAL">
                 <constraints nullable="false"/>
             </column>
         </createTable>
     </changeSet>
 
     <!-- CREATE TABLE AGENDA -->
-    <changeSet id="1.0.3" author="mihovel">
+    <changeSet id="1.0.4" author="mihovel">
         <createTable tableName="agenda">
-            <column name="id" type="BIGINT" autoIncrement="true">
+            <column name="id" type="BIGSERIAL">
                 <constraints primaryKey="true"/>
             </column>
 
@@ -82,11 +86,7 @@
                 <constraints nullable="false"/>
             </column>
 
-            <column name="status" type="VARCHAR(32)" defaultValue="valid">
-                <constraints nullable="false"/>
-            </column>
-
-            <column name="username" type="VARCHAR(32)">
+            <column name="usersid" type="SERIAL">
                 <constraints nullable="false"/>
             </column>
 
@@ -110,30 +110,30 @@
 
     <!-- ADD CONSTRAINTS -->
     <!--TODO: что такое каскад и рестрикт?-->
-    <changeSet id="1.0.4" author="mihovel">
+    <changeSet id="1.0.5" author="mihovel">
         <addForeignKeyConstraint baseTableName="users_to_roles"
-                                 baseColumnNames="username"
+                                 baseColumnNames="usersid"
                                  constraintName="fk_users_to_roles_user"
                                  referencedTableName="users"
-                                 referencedColumnNames="name"
+                                 referencedColumnNames="id"
                                  onDelete="CASCADE"
                                  onUpdate="RESTRICT"
         />
 
         <addForeignKeyConstraint baseTableName="users_to_roles"
-                                 baseColumnNames="rolename"
+                                 baseColumnNames="rolesid"
                                  constraintName="fk_users_to_roles_roles"
                                  referencedTableName="roles"
-                                 referencedColumnNames="role"
+                                 referencedColumnNames="id"
                                  onDelete="CASCADE"
                                  onUpdate="RESTRICT"
         />
 
         <addForeignKeyConstraint baseTableName="agenda"
-                                 baseColumnNames="username"
+                                 baseColumnNames="usersid"
                                  constraintName="fk_agenda_user"
                                  referencedTableName="users"
-                                 referencedColumnNames="name"
+                                 referencedColumnNames="id"
         />
     </changeSet>
 </databaseChangeLog>

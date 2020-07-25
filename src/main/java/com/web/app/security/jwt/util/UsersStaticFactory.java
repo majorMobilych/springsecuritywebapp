@@ -14,9 +14,10 @@ import java.util.stream.Collectors;
 public final class UsersStaticFactory {
     public static JwtUser EntityToJwt(UsersEntity usersEntity) {
         return new JwtUser(
+                usersEntity.getId(),
                 usersEntity.getCreated(),
                 usersEntity.getUpdated(),
-                usersEntity.getStatus(),
+                usersEntity.isValidity(),
                 usersEntity.getEmail(),
                 usersEntity.getName(),
                 usersEntity.getPassword(),
@@ -28,6 +29,7 @@ public final class UsersStaticFactory {
         return usersEntity
                 .getRoles()
                 .stream()
+                //TODO: в чем разница между map() и flatMap() в стримах?
                 .map(role -> new SimpleGrantedAuthority(role.getRole()))
                 .collect(Collectors.toSet());
     }

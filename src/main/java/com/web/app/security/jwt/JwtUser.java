@@ -1,7 +1,5 @@
 package com.web.app.security.jwt;
 
-import com.web.app.entity.Status;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,12 +10,16 @@ import java.util.Set;
 public class JwtUser implements UserDetails {
 
     @Getter
+    private final Integer id;
+
+    @Getter
     private final Date created;
 
     @Getter
     private final Date updated;
 
-    private final Status status;
+    @Getter
+    private final boolean validity;
 
     @Getter
     private final String email;
@@ -28,16 +30,18 @@ public class JwtUser implements UserDetails {
 
     private final Set<? extends GrantedAuthority> authorities;
 
-    public JwtUser(Date created,
+    public JwtUser(Integer id,
+                   Date created,
                    Date updated,
-                   Status status,
+                   boolean validity,
                    String email,
                    String name,
                    String password,
                    Set<? extends GrantedAuthority> authorities) {
+        this.id = id;
         this.created = created;
         this.updated = updated;
-        this.status = status;
+        this.validity = validity;
         this.email = email;
         this.name = name;
         this.password = password;
@@ -69,9 +73,10 @@ public class JwtUser implements UserDetails {
         return true;
     }
 
+    //TODO: переделать
     @Override
     public boolean isEnabled() {
-        return status.isValid();
+        return true;
     }
 
     @Override
