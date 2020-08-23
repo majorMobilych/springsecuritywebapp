@@ -10,8 +10,12 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class UsersStaticFactory {
+
+    private UsersStaticFactory() {
+        throw new AssertionError("UsersStaticFactory.class can't be instantiated");
+    }
+
     public static JwtUser EntityToJwt(UsersEntity usersEntity) {
         return new JwtUser(
                 usersEntity.getId(),
@@ -29,7 +33,6 @@ public final class UsersStaticFactory {
         return usersEntity
                 .getRoles()
                 .stream()
-                //TODO: в чем разница между map() и flatMap() в стримах?
                 .map(role -> new SimpleGrantedAuthority(role.getRole()))
                 .collect(Collectors.toSet());
     }

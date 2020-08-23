@@ -11,11 +11,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -24,28 +23,23 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
-@PropertySource("properties/jwt.properties")
+@PropertySource("properties/security/jwt.properties")
 public class JwtProviderImpl implements JwtProvider {
 
     private final UserDetailsService userDetailsService;
 
-    @Autowired
-    public JwtProviderImpl(@Qualifier("jwtUserDetailsService") UserDetailsService userDetailsService) {
-        this.userDetailsService = userDetailsService;
-    }
-
     @Value("${jwt.token.secret}")
     private String secret;
 
-    // TODO: проперти считается и автоматически закастится в лонг?
     @Value("${jwt.token.secret}")
     private Long validTillMillis;
 
-    private final int TOKEN_LENGTH = 7;
+    @Value("${token.length}")
+    private int token_length;
 
-    @Bean
-    public BCryptPasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+    @Autowired
+    public JwtProviderImpl(@Qualifier("jwtUserDetailsService") UserDetailsService userDetailsService) {
+        this.userDetailsService = userDetailsService;
     }
 
     @PostConstruct
@@ -55,8 +49,13 @@ public class JwtProviderImpl implements JwtProvider {
                 .encodeToString(secret.getBytes());
     }
 
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
     @Override
-    public String createToken(String username, Set<RolesEntity> roles) {
+    public String provideToken(String username, Set<RolesEntity> roles) {
         Claims claims = (Claims) Jwts
                 .claims()
                 .setSubject(username)
@@ -74,41 +73,15 @@ public class JwtProviderImpl implements JwtProvider {
                 .compact();
     }
 
-    private Set<String> getRoleNames(Set<RolesEntity> usersRoles) {
-        return usersRoles
-                .stream()
-                .map(RolesEntity::getRole)
-                .collect(Collectors.toSet());
-    }
-
-    @Override
-    public Authentication createAuthentication(String token) {
-        UserDetails userDetails = this
-                .userDetailsService
-                .loadUserByUsername(getUsernameByToken(token));
-
-        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
-    }
-
     @Override
     public String resolveToken(HttpServletRequest req) {
-        //TODO: а "Authorization" всегда будет в начале точена стоять?
+        //TODO: а "Authorization" всегда будет в начале токена стоять?
         String bearerToken = req.getHeader("Authorization");
         //TODO: что делать с бэрэром?
         if (bearerToken != null && bearerToken.startsWith("Bearer_")) {
-            return bearerToken.substring(TOKEN_LENGTH);
+            return bearerToken.substring(token_length);
         }
         return null;
-    }
-
-    @Override
-    public String getUsernameByToken(String token) {
-        return Jwts
-                .parser()
-                .setSigningKey(secret)
-                .parseClaimsJws(token)
-                .getBody()
-                .getSubject();
     }
 
     @Override
@@ -128,8 +101,26 @@ public class JwtProviderImpl implements JwtProvider {
         }
     }
 
+    private Set<String> getRoleNames(Set<RolesEntity> usersRoles) {
+        return usersRoles
+                .stream()
+                .map(RolesEntity::getRole)
+                .collect(Collectors.toSet());
+    }
+
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userDetailsService.loadUserByUsername(username);
+    public Authentication provideAuthentication(String token) {
+        UserDetails userDetails = userDetailsService.loadUserByUsername(getUsernameByToken(token));
+
+        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+    }
+
+    private String getUsernameByToken(String token) {
+        return Jwts
+                .parser()
+                .setSigningKey(secret)
+                .parseClaimsJws(token)
+                .getBody()
+                .getSubject();
     }
 }

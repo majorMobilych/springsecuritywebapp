@@ -1,16 +1,18 @@
 package com.web.app.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.web.app.entity.AgendaEntity;
 import com.web.app.entity.UsersEntity;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.Set;
 
-@Data
-@JsonIgnoreProperties(ignoreUnknown = true)
+@NoArgsConstructor
 @AllArgsConstructor
+@Getter
+@Setter
 public class UsersDTO {
     private String name;
     private String email;

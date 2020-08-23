@@ -1,33 +1,30 @@
 package components.repository;
 
-import com.web.app.config.HibernateConfig;
-import com.web.app.repository.hibernate.UsersRepositoryHibernate;
-import com.web.app.repository.hibernate.UsersRepositoryHibernateImpl;
+import com.web.app.ApplicationRunner;
+import com.web.app.repository.UsersRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.transaction.annotation.Transactional;
 
-
-//TODO: НЕ ПОНЯЛ, clearTest1() РАБОТАЕТ, А clearTest() - НЕТ
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = ApplicationRunner.class)
+@Transactional
+@Slf4j
+@EnableJpaRepositories
 public class RepositoryTests {
 
-    private final static UsersRepositoryHibernate usersRepositoryHibernate;
-
-    static  {
-        //usersRepositoryHibernate = new UsersRepositoryHibernateImpl(new HibernateConfig().createSessionFactory());
-
-        HibernateConfig hibernateConfig = new HibernateConfig();
-        usersRepositoryHibernate = new UsersRepositoryHibernateImpl(hibernateConfig.createSessionFactory());
-    }
+    @Autowired
+    private UsersRepository usersRepository;
 
     @Test
-    public void clearTest() {
-        HibernateConfig hibernateConfig = new HibernateConfig();
-        UsersRepositoryHibernate usersRepositoryHibernate = new UsersRepositoryHibernateImpl(hibernateConfig.createSessionFactory());
-        usersRepositoryHibernate.clear();
-    }
-
-    @Test
-    public void clearTest1() {
-        usersRepositoryHibernate.clear();
+    @Rollback(value = false)
+    public void testDelete() {
+        usersRepository.deleteAll();
     }
 }

@@ -1,9 +1,13 @@
 package com.web.app.model;
 
-import lombok.Data;
+import lombok.*;
 
-@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 public class AuthenticationRequestDTO {
-    private String login;
+
+    private String email;
     private String password;
 }

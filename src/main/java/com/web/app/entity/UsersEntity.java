@@ -1,15 +1,16 @@
 package com.web.app.entity;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.Set;
 
 @Entity
 @Table(name = "users")
-@Data
-@EqualsAndHashCode(callSuper = false)
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 public class UsersEntity extends BaseEntity {
 
     @Id
@@ -29,28 +30,30 @@ public class UsersEntity extends BaseEntity {
 
     @Basic
     @Column(name = "name")
-    @EqualsAndHashCode.Exclude
     private String name;
 
     @Basic
     @Column(name = "password", nullable = false)
-    // TODO: правильно ли я тут поставил аннтацию?
-    @EqualsAndHashCode.Exclude
     private String password;
 
-    //TODO: что такое фетч?
+    //TODO: Про кеши 1го, 2го и 3го уровня
     //TODO: (для меня) посмотреть доку на @ManyToMany, @JoinTable и @JoinColumn
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "users_to_roles",
             joinColumns = {@JoinColumn(name = "userid", referencedColumnName = "id")},
             inverseJoinColumns = {@JoinColumn(name = "roleid", referencedColumnName = "id")})
-    // TODO: правильно ли я тут поставил аннтацию?
-    @EqualsAndHashCode.Exclude
     private Set<RolesEntity> roles;
 
-    //TODO: прочекать правильность с AgendaEntity.class...(НЕ РАБОТАЕТ)
-    @OneToMany(mappedBy = "usersid", cascade = CascadeType.ALL, orphanRemoval = true)
-    // TODO: правильно ли я тут поставил аннтацию?
-    @EqualsAndHashCode.Exclude
+    @OneToMany(mappedBy = "usersid", cascade = CascadeType.ALL)
     private Set<AgendaEntity> agendas;
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof UsersEntity) {
+            UsersEntity usersEntity = (UsersEntity) obj;
+            return (usersEntity.getEmail().equals(((UsersEntity) obj).getEmail()) &&
+                    usersEntity.getName().equals(((UsersEntity) obj).getName()));
+        }
+        return false;
+    }
 }

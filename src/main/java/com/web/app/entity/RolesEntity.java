@@ -1,36 +1,43 @@
 package com.web.app.entity;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.Comparator;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
 @Table(name = "roles")
-@Data
-//TODO: мне не нравится реализация иквелса: ломбок генерит код, проверяющий на равенство имена ролей И СЕТ ЮЗЕРСЕНТИТИ.
-// (чекал по деломбоку), мно достаточно сделать this.getRole().equals(other.getRole()). А теперь представляем (изврат):
-// Я добавляю роль, которая по имени совпадает с другой, но кидаю в нее других пользователей - роли как бы одинаковые,
-// но equals() выдаст false -> выход - аннотация @EqualsAndHashCode.Exclude
-@EqualsAndHashCode(callSuper = false)
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 public class RolesEntity extends BaseEntity {
 
     @Id
     @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Basic
     @Column(name = "role", unique = true, nullable = false)
     private String role;
 
-    //TODO: а что, если будет роль, которая не соответсутвует ни одному юзеру (например, все модеры оказались)
-    // не оч и я всех 'уволил', но модеры нужны), т.е. пока роль "модер" не соответсвует ни одному пользователю ->
-    // как это отобразить?
-    //TODO: ...вот тут прочекать
     //TODO: про доп. параметы в @ManyToMany(targetEntity, cascade, ...)
     @ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)
-    // TODO: правильно ли я тут поставил аннтацию?
-    @EqualsAndHashCode.Exclude
     private Set<UsersEntity> users;
+
+    @Override
+    public boolean equals(Object obj) {
+        //TODO: в чем разница: null.equals(str) и str.equals(null)
+        if (obj instanceof RolesEntity) {
+            RolesEntity rolesEntity = (RolesEntity) obj;
+            return Objects.equals(this.role, rolesEntity.getRole());
+        }
+        return false;
+    }
 }
