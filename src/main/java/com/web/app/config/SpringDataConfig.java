@@ -25,7 +25,7 @@ import java.util.Properties;
  * </b>
  */
 @Configuration
-@EnableJpaRepositories(basePackages = "com.web.app.repository",
+@EnableJpaRepositories(basePackages = "com.web.app",
         entityManagerFactoryRef = "localContainerEntityManagerFactoryBean")
 @EnableTransactionManagement
 @PropertySource("properties/db/springdata.properties")

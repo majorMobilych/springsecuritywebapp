@@ -19,7 +19,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final JwtProviderImpl JwtProviderImplImpl;
 
     private final String ADMIN_ENDPOINT = "/api/v1/admin/**";
-    private final String LOGIN_ENDPOINT = "/api/v1/auth/login";
+    private final String LOGIN_ENDPOINT = "/login";
 
     @Autowired
     public SecurityConfig(JwtProviderImpl JwtProviderImplImpl) {
@@ -34,15 +34,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
-                .httpBasic().disable()
-                .csrf().disable()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
                 .authorizeRequests()
-                .antMatchers(LOGIN_ENDPOINT).permitAll()
-                .antMatchers(ADMIN_ENDPOINT).hasRole("admin")
+                .antMatchers("/").permitAll()
                 .anyRequest().authenticated()
                 .and()
-                .apply(new JwtConfigurer(JwtProviderImplImpl));
+                .formLogin()
+                .loginPage("/login")
+                .permitAll();
     }
 }

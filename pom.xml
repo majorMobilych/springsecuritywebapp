@@ -41,12 +41,10 @@
             <version>42.2.13</version>
         </dependency>
 
-<!--        &lt;!&ndash; PostgreSQL &ndash;&gt;
         <dependency>
-            <groupId>postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-            <version>9.1-901p-1.jdbc4</version>
-        </dependency>-->
+            <groupId>org.apache.tomcat.embed</groupId>
+            <artifactId>tomcat-embed-jasper</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.liquibase</groupId>
@@ -113,8 +111,8 @@
                 <artifactId>liquibase-maven-plugin</artifactId>
                 <version>3.10.2</version>
                 <configuration>
-                    <propertyFile>src/main/db/liquibase.properties</propertyFile>
-                    <changeLogFile>src/main/db/db-changelog-master.xml</changeLogFile>
+                    <propertyFile>db/liquibase.properties</propertyFile>
+                    <changeLogFile>db/changelog/db-changelog-master.xml</changeLogFile>
                     <promptOnNonLocalDatabase>false</promptOnNonLocalDatabase>
                 </configuration>
             </plugin>

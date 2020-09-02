@@ -3,6 +3,7 @@ package com.web.app.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -15,6 +16,7 @@ public class UsersEntity extends BaseEntity {
 
     @Id
     @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Basic
@@ -46,8 +48,7 @@ public class UsersEntity extends BaseEntity {
     public boolean equals(Object obj) {
         if (obj instanceof UsersEntity) {
             UsersEntity usersEntity = (UsersEntity) obj;
-            return (usersEntity.getEmail().equals(((UsersEntity) obj).getEmail()) &&
-                    usersEntity.getName().equals(((UsersEntity) obj).getName()));
+            return Objects.equals(this.name, usersEntity.getName());
         }
         return false;
     }
