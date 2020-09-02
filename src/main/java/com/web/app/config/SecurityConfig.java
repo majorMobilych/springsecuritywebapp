@@ -16,14 +16,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-    private final JwtProviderImpl JwtProviderImplImpl;
+    private final JwtProviderImpl jwtProviderImpl;
 
     private final String ADMIN_ENDPOINT = "/api/v1/admin/**";
     private final String LOGIN_ENDPOINT = "/login";
 
     @Autowired
-    public SecurityConfig(JwtProviderImpl JwtProviderImplImpl) {
-        this.JwtProviderImplImpl = JwtProviderImplImpl;
+    public SecurityConfig(JwtProviderImpl jwtProviderImpl) {
+        this.jwtProviderImpl = jwtProviderImpl;
     }
 
     @Bean

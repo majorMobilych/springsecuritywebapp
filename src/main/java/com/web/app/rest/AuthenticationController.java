@@ -24,14 +24,14 @@ import java.util.Map;
 public class AuthenticationController {
 
     private final AuthenticationManager authenticationManager;
-    private final JwtProviderImpl JwtProviderImplImpl;
+    private final JwtProviderImpl jwtProviderImpl;
     private final DefaultUsersService defaultUsersService;
 
     @Autowired
-    public AuthenticationController(AuthenticationManager authenticationManager, JwtProviderImpl JwtProviderImplImpl,
+    public AuthenticationController(AuthenticationManager authenticationManager, JwtProviderImpl jwtProviderImpl,
                                     DefaultUsersService defaultUsersService) {
         this.authenticationManager = authenticationManager;
-        this.JwtProviderImplImpl = JwtProviderImplImpl;
+        this.jwtProviderImpl = jwtProviderImpl;
         this.defaultUsersService = defaultUsersService;
     }
 
@@ -45,7 +45,7 @@ public class AuthenticationController {
             throw new UsernameNotFoundException("User with " + username + " - username not found");
         }
 
-        String token = JwtProviderImplImpl.provideToken(username, usersEntity.getRoles());
+        String token = jwtProviderImpl.provideToken(username, usersEntity.getRoles());
         Map<Object, Object> response = new HashMap<>();
         response.put("username", username);
         response.put("token", token);
