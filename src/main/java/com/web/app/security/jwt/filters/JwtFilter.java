@@ -1,7 +1,6 @@
 package com.web.app.security.jwt.filters;
 
-import com.web.app.security.jwt.providers.JwtProvider;
-import com.web.app.security.jwt.providers.impl.JwtProviderImpl;
+import com.web.app.security.jwt.providers.JwtProviderImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,20 +17,20 @@ import java.io.IOException;
 @Component
 public class JwtFilter extends GenericFilterBean {
 
-    private final JwtProvider jwtProvider;
+    private final JwtProviderImpl JwtProviderImpl;
 
     @Autowired
-    public JwtFilter(JwtProvider jwtProvider) {
-        this.jwtProvider = jwtProvider;
+    public JwtFilter(JwtProviderImpl JwtProviderImpl) {
+        this.JwtProviderImpl = JwtProviderImpl;
     }
 
     @Override
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain filterChain) throws IOException,
             ServletException {
-        String token = jwtProvider.resolveToken((HttpServletRequest) req);
+        String token = JwtProviderImpl.resolveToken((HttpServletRequest) req);
 
-        if (token != null && jwtProvider.validateToken(token)) {
-            Authentication authentication = jwtProvider.provideAuthentication(token);
+        if (token != null && JwtProviderImpl.validateToken(token)) {
+            Authentication authentication = JwtProviderImpl.provideAuthentication(token);
 
             if (authentication != null) {
                 SecurityContextHolder.getContext().setAuthentication(authentication);

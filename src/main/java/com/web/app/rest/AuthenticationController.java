@@ -2,8 +2,8 @@ package com.web.app.rest;
 
 import com.web.app.entity.UsersEntity;
 import com.web.app.model.AuthenticationRequestDTO;
-import com.web.app.security.jwt.providers.impl.JwtProviderImpl;
-import com.web.app.service.UsersService;
+import com.web.app.security.jwt.providers.JwtProviderImpl;
+import com.web.app.service.DefaultUsersService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,28 +22,28 @@ import java.util.Map;
 public class AuthenticationController {
 
     private final AuthenticationManager authenticationManager;
-    private final JwtProviderImpl jwtProviderImpl;
-    private final UsersService usersService;
+    private final JwtProviderImpl JwtProviderImplImpl;
+    private final DefaultUsersService defaultUsersService;
 
     @Autowired
-    public AuthenticationController(AuthenticationManager authenticationManager, JwtProviderImpl jwtProviderImpl,
-                                    UsersService usersService) {
+    public AuthenticationController(AuthenticationManager authenticationManager, JwtProviderImpl JwtProviderImplImpl,
+                                    DefaultUsersService defaultUsersService) {
         this.authenticationManager = authenticationManager;
-        this.jwtProviderImpl = jwtProviderImpl;
-        this.usersService = usersService;
+        this.JwtProviderImplImpl = JwtProviderImplImpl;
+        this.defaultUsersService = defaultUsersService;
     }
 
     public ResponseEntity login(@RequestBody AuthenticationRequestDTO authenticationRequestDTO) {
-        String username = authenticationRequestDTO.getEmail();
+        String username = authenticationRequestDTO.getUsername();
         authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(username, authenticationRequestDTO.getPassword()));
-        UsersEntity usersEntity = usersService.findByName(username);
+        UsersEntity usersEntity = defaultUsersService.findByName(username);
 
         if (usersEntity == null) {
             throw new UsernameNotFoundException("User with " + username + " - username not found");
         }
 
-        String token = jwtProviderImpl.provideToken(username, usersEntity.getRoles());
+        String token = JwtProviderImplImpl.provideToken(username, usersEntity.getRoles());
         Map<Object, Object> response = new HashMap<>();
         response.put("username", username);
         response.put("token", token);

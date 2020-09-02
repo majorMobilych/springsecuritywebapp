@@ -5,11 +5,12 @@ import com.web.app.entity.UsersEntity;
 import com.web.app.model.AuthenticationRequestDTO;
 import com.web.app.repository.RolesRepository;
 import com.web.app.repository.UsersRepository;
-import com.web.app.service.UsersService;
+import com.web.app.service.DefaultUsersService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -19,24 +20,25 @@ import java.util.Set;
 @Service
 @PropertySource("properties/service/service.properties")
 @Slf4j
-public class UsersServiceImpl implements UsersService {
+public class DefaultUsersServiceImpl implements DefaultUsersService {
 
     private final UsersRepository usersRepository;
     private final RolesRepository rolesRepository;
-    private final PasswordEncoder passwordEncoder;
-
-    @Value("default_role")
-    private String default_role;
+    //TODO: Тут чето ломается, если делать через автоваерд-конструктор, но мне так не нравится
+    private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @Autowired
-    public UsersServiceImpl(UsersRepository usersRepository, RolesRepository rolesRepository, PasswordEncoder passwordEncoder) {
+    public DefaultUsersServiceImpl(UsersRepository usersRepository,
+                                   RolesRepository rolesRepository) {
         this.usersRepository = usersRepository;
         this.rolesRepository = rolesRepository;
-        this.passwordEncoder = passwordEncoder;
     }
 
+    @Value("${user.role.default}")
+    private String defaultRole;
+
     private Set<RolesEntity> getDefaultUserRole() {
-        RolesEntity rolesEntity = rolesRepository.findByRole(default_role);
+        RolesEntity rolesEntity = rolesRepository.findByRole(defaultRole);
         Set<RolesEntity> defaultUserRoles = new HashSet<>();
         defaultUserRoles.add(rolesEntity);
         return defaultUserRoles;
@@ -70,11 +72,12 @@ public class UsersServiceImpl implements UsersService {
 
     @Override
     public UsersEntity findByEmailAndPassword(AuthenticationRequestDTO authenticationRequestDTO) {
-        UsersEntity usersRepositoryByEmail = usersRepository.findByEmail(authenticationRequestDTO.getEmail());
+        UsersEntity usersRepositoryByEmail = usersRepository.findByEmail(authenticationRequestDTO.getUsername());
 
         if (passwordEncoder.matches(authenticationRequestDTO.getPassword(), usersRepositoryByEmail.getPassword())) {
             return usersRepositoryByEmail;
         }
+
         return null;
     }
 

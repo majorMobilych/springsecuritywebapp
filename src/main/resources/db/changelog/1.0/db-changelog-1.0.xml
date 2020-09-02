@@ -5,7 +5,7 @@
                    objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
 
     <!-- CREATE TABLE USERS -->
-    <changeSet id="1.0.0" author="mihovel">
+    <changeSet id="1.0.0" author="provider">
         <createTable tableName="users">
             <column name="id" type="SERIAL">
                 <constraints primaryKey="true"/>
@@ -38,7 +38,7 @@
     </changeSet>
 
     <!-- CREATE TABLE ROLES -->
-    <changeSet id="1.0.1" author="mihovel">
+    <changeSet id="1.0.1" author="provider">
         <createTable tableName="roles">
             <column name="id" type="SERIAL">
                 <constraints primaryKey="true"/>
@@ -59,7 +59,7 @@
     </changeSet>
 
     <!-- CREATE TABLE USERS_TO_ROLES -->
-    <changeSet id="1.0.2" author="mihovel">
+    <changeSet id="1.0.2" author="provider">
         <createTable tableName="users_to_roles">
             <column name="usersid" type="SERIAL">
                 <constraints nullable="false"/>
@@ -72,7 +72,7 @@
     </changeSet>
 
     <!-- CREATE TABLE AGENDA -->
-    <changeSet id="1.0.4" author="mihovel">
+    <changeSet id="1.0.4" author="provider">
         <createTable tableName="agenda">
             <column name="id" type="BIGSERIAL">
                 <constraints primaryKey="true"/>
@@ -109,8 +109,7 @@
     </changeSet>
 
     <!-- ADD CONSTRAINTS -->
-    <!--TODO: что такое каскад и рестрикт?-->
-    <changeSet id="1.0.5" author="mihovel">
+    <changeSet id="1.0.5" author="provider">
         <addForeignKeyConstraint baseTableName="users_to_roles"
                                  baseColumnNames="usersid"
                                  constraintName="fk_users_to_roles_user"

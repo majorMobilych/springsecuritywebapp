@@ -27,13 +27,11 @@ public class RolesEntity extends BaseEntity {
     @Column(name = "role", unique = true, nullable = false)
     private String role;
 
-    //TODO: про доп. параметы в @ManyToMany(targetEntity, cascade, ...)
     @ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)
     private Set<UsersEntity> users;
 
     @Override
     public boolean equals(Object obj) {
-        //TODO: в чем разница: null.equals(str) и str.equals(null)
         if (obj instanceof RolesEntity) {
             RolesEntity rolesEntity = (RolesEntity) obj;
             return Objects.equals(this.role, rolesEntity.getRole());

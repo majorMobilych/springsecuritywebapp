@@ -2,7 +2,7 @@ package com.web.app.rest;
 
 import com.web.app.entity.UsersEntity;
 import com.web.app.model.UsersDTO;
-import com.web.app.service.UsersService;
+import com.web.app.service.DefaultUsersService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,16 +15,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(name = "/api/v1/user/")
 public class UsersController {
-    private final UsersService usersService;
+    private final DefaultUsersService defaultUsersService;
 
     @Autowired
-    public UsersController(UsersService usersService) {
-        this.usersService = usersService;
+    public UsersController(DefaultUsersService defaultUsersService) {
+        this.defaultUsersService = defaultUsersService;
     }
 
     @GetMapping(value = "{name}")
     public ResponseEntity<UsersDTO> getUserById(@PathVariable(name = "name") String name) {
-        UsersEntity usersEntity = usersService.findByName(name);
+        UsersEntity usersEntity = defaultUsersService.findByName(name);
 
         if (usersEntity == null) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);

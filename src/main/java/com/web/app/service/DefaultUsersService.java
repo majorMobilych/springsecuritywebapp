@@ -3,7 +3,7 @@ package com.web.app.service;
 import com.web.app.entity.UsersEntity;
 import com.web.app.model.AuthenticationRequestDTO;
 
-public interface UsersService {
+public interface DefaultUsersService {
 
     boolean save(UsersEntity usersEntity);
 

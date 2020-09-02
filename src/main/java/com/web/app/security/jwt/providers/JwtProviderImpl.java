@@ -1,8 +1,7 @@
-package com.web.app.security.jwt.providers.impl;
+package com.web.app.security.jwt.providers;
 
 import com.web.app.entity.RolesEntity;
 import com.web.app.security.jwt.exceptions.JwtAuthenticationException;
-import com.web.app.security.jwt.providers.JwtProvider;
 import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -24,23 +23,23 @@ import java.util.stream.Collectors;
 
 @Component
 @PropertySource("properties/security/jwt.properties")
-public class JwtProviderImpl implements JwtProvider {
+public class JwtProviderImpl {
 
     private final UserDetailsService userDetailsService;
-
-    @Value("${jwt.token.secret}")
-    private String secret;
-
-    @Value("${jwt.token.secret}")
-    private Long validTillMillis;
-
-    @Value("${token.length}")
-    private int token_length;
 
     @Autowired
     public JwtProviderImpl(@Qualifier("jwtUserDetailsService") UserDetailsService userDetailsService) {
         this.userDetailsService = userDetailsService;
     }
+
+    @Value("${jwt.secret}")
+    private String secret;
+
+    @Value("${jwt.expiration.time}")
+    private Long validTillMillis;
+
+    @Value("${jwt.length}")
+    private int tokenLength;
 
     @PostConstruct
     protected void init() {
@@ -49,12 +48,6 @@ public class JwtProviderImpl implements JwtProvider {
                 .encodeToString(secret.getBytes());
     }
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-    @Override
     public String provideToken(String username, Set<RolesEntity> roles) {
         Claims claims = (Claims) Jwts
                 .claims()
@@ -73,18 +66,15 @@ public class JwtProviderImpl implements JwtProvider {
                 .compact();
     }
 
-    @Override
     public String resolveToken(HttpServletRequest req) {
-        //TODO: а "Authorization" всегда будет в начале токена стоять?
         String bearerToken = req.getHeader("Authorization");
-        //TODO: что делать с бэрэром?
+        //TODO: откуда 'Bearer_' и что он значит?
         if (bearerToken != null && bearerToken.startsWith("Bearer_")) {
-            return bearerToken.substring(token_length);
+            return bearerToken.substring(tokenLength);
         }
         return null;
     }
 
-    @Override
     public boolean validateToken(String token) {
         try {
             Jws<Claims> claims = Jwts
@@ -108,7 +98,6 @@ public class JwtProviderImpl implements JwtProvider {
                 .collect(Collectors.toSet());
     }
 
-    @Override
     public Authentication provideAuthentication(String token) {
         UserDetails userDetails = userDetailsService.loadUserByUsername(getUsernameByToken(token));
 

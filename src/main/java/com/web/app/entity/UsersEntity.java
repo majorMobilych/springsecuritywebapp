@@ -19,13 +19,10 @@ public class UsersEntity extends BaseEntity {
 
     @Basic
     @Column(name = "email", nullable = false, unique = true)
-    // TODO: правильно ли я тут поставил аннтацию?
-    @EqualsAndHashCode.Exclude
     private String email;
 
     @Basic
     @Column(name = "validity", nullable = false)
-    @EqualsAndHashCode.Exclude
     private boolean validity;
 
     @Basic
@@ -36,8 +33,6 @@ public class UsersEntity extends BaseEntity {
     @Column(name = "password", nullable = false)
     private String password;
 
-    //TODO: Про кеши 1го, 2го и 3го уровня
-    //TODO: (для меня) посмотреть доку на @ManyToMany, @JoinTable и @JoinColumn
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "users_to_roles",
             joinColumns = {@JoinColumn(name = "userid", referencedColumnName = "id")},

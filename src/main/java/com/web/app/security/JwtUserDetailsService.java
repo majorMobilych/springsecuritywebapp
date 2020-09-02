@@ -2,7 +2,7 @@ package com.web.app.security;
 
 import com.web.app.entity.UsersEntity;
 import com.web.app.security.jwt.JwtUser;
-import com.web.app.service.UsersService;
+import com.web.app.service.DefaultUsersService;
 import com.web.app.security.jwt.util.UsersStaticFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,16 +15,16 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class JwtUserDetailsService implements UserDetailsService {
 
-    private final UsersService usersService;
+    private final DefaultUsersService defaultUsersService;
 
     @Autowired
-    public JwtUserDetailsService(UsersService usersService) {
-        this.usersService = usersService;
+    public JwtUserDetailsService(DefaultUsersService defaultUsersService) {
+        this.defaultUsersService = defaultUsersService;
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UsersEntity user = usersService.findByName(username);
+        UsersEntity user = defaultUsersService.findByName(username);
         JwtUser jwtUser = UsersStaticFactory.EntityToJwt(user);
 
         log.info("IN loadUserByUsername - user, having userName: {} successfully loaded", username);

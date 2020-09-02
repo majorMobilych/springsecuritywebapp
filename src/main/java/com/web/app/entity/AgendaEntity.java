@@ -17,7 +17,6 @@ import java.time.DayOfWeek;
 public class AgendaEntity extends BaseEntity {
 
     @Id
-    //TODO: про генерейтедВэлью ничего не понял
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;

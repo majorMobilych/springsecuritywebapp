@@ -73,10 +73,9 @@ public class JwtUser implements UserDetails {
         return true;
     }
 
-    //TODO: переделать
     @Override
     public boolean isEnabled() {
-        return true;
+        return validity;
     }
 
     @Override

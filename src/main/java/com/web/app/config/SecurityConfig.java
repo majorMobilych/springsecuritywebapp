@@ -1,7 +1,7 @@
 package com.web.app.config;
 
 import com.web.app.security.jwt.configurers.JwtConfigurer;
-import com.web.app.security.jwt.providers.impl.JwtProviderImpl;
+import com.web.app.security.jwt.providers.JwtProviderImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,18 +10,20 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-    private final JwtProviderImpl jwtProviderImpl;
+    private final JwtProviderImpl JwtProviderImplImpl;
 
     private final String ADMIN_ENDPOINT = "/api/v1/admin/**";
     private final String LOGIN_ENDPOINT = "/api/v1/auth/login";
 
     @Autowired
-    public SecurityConfig(JwtProviderImpl jwtProviderImpl) {
-        this.jwtProviderImpl = jwtProviderImpl;
+    public SecurityConfig(JwtProviderImpl JwtProviderImplImpl) {
+        this.JwtProviderImplImpl = JwtProviderImplImpl;
     }
 
     @Bean
@@ -41,6 +43,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(ADMIN_ENDPOINT).hasRole("admin")
                 .anyRequest().authenticated()
                 .and()
-                .apply(new JwtConfigurer(jwtProviderImpl));
+                .apply(new JwtConfigurer(JwtProviderImplImpl));
     }
 }
