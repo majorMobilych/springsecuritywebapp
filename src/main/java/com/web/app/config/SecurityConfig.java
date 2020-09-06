@@ -1,6 +1,5 @@
 package com.web.app.config;
 
-import com.web.app.security.jwt.configurers.JwtConfigurer;
 import com.web.app.security.jwt.providers.JwtProviderImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -9,17 +8,12 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-    private final JwtProviderImpl jwtProviderImpl;
 
-    private final String ADMIN_ENDPOINT = "/api/v1/admin/**";
-    private final String LOGIN_ENDPOINT = "/login";
+    private final JwtProviderImpl jwtProviderImpl;
 
     @Autowired
     public SecurityConfig(JwtProviderImpl jwtProviderImpl) {
@@ -34,12 +28,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
-                .authorizeRequests()
-                .antMatchers("/").permitAll()
-                .anyRequest().authenticated()
-                .and()
+                .csrf().disable()
                 .formLogin()
-                .loginPage("/login")
-                .permitAll();
+                .loginPage("/login").permitAll()
+                .and()
+                .authorizeRequests()
+                .anyRequest().authenticated();
     }
 }

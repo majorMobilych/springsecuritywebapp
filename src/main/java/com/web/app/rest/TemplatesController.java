@@ -12,24 +12,20 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.ModelAndView;
 
 import java.util.HashMap;
 import java.util.Map;
 
-@RestController
-@RequestMapping("api/v1/auth")
-public class AuthenticationController {
+@Controller
+public class TemplatesController {
 
     private final AuthenticationManager authenticationManager;
     private final JwtProviderImpl jwtProviderImpl;
     private final DefaultUsersService defaultUsersService;
 
     @Autowired
-    public AuthenticationController(AuthenticationManager authenticationManager, JwtProviderImpl jwtProviderImpl,
-                                    DefaultUsersService defaultUsersService) {
+    public TemplatesController(AuthenticationManager authenticationManager, JwtProviderImpl jwtProviderImpl,
+                               DefaultUsersService defaultUsersService) {
         this.authenticationManager = authenticationManager;
         this.jwtProviderImpl = jwtProviderImpl;
         this.defaultUsersService = defaultUsersService;
@@ -53,8 +49,8 @@ public class AuthenticationController {
     }
 
     @GetMapping("/login")
-    public ModelAndView login() {
-        System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-        return new ModelAndView("login.html");
+    public String  login() {
+        return "/login";
     }
 }
+
