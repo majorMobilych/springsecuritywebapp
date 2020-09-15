@@ -1,0 +1,48 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd"
+                   objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
+
+    <!-- CREATE TABLE USERS -->
+    <changeSet id="1.0.0" author="provider">
+        <createTable tableName="users">
+            <column name="id" type="SERIAL">
+                <constraints primaryKey="true"/>
+            </column>
+
+            <column name="created" type="TIMESTAMP" defaultValue="NOW()">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="updated" type="TIMESTAMP" defaultValue="NOW()">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="validity" type="BOOLEAN" defaultValue="TRUE">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="email" type="VARCHAR(256)">
+                <constraints unique="true" nullable="false"/>
+            </column>
+
+            <column name="name" type="VARCHAR(32)">
+                <constraints unique="true" nullable="false"/>
+            </column>
+
+            <column name="password" type="VARCHAR(60)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="agenda"
+                                 baseColumnNames="usersid"
+                                 constraintName="fk_agenda_user"
+                                 referencedTableName="users"
+                                 referencedColumnNames="id"
+        />
+
+    </changeSet>
+
+</databaseChangeLog>

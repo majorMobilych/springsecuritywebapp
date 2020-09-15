@@ -4,5 +4,5 @@
                         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd"
                    objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
 
-    <include file="1.0/db-changelog-1.0.xml" relativeToChangelogFile="true"/>
+    <includeAll path="1.0" relativeToChangelogFile="true"/>
 </databaseChangeLog>

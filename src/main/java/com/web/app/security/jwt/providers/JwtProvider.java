@@ -3,6 +3,7 @@ package com.web.app.security.jwt.providers;
 import com.web.app.entity.RolesEntity;
 import com.web.app.security.jwt.exceptions.JwtAuthenticationException;
 import io.jsonwebtoken.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,6 +11,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -23,12 +25,13 @@ import java.util.stream.Collectors;
 
 @Component
 @PropertySource("properties/security/jwt.properties")
-public class JwtProviderImpl {
+@Slf4j
+public class JwtProvider {
 
     private final UserDetailsService userDetailsService;
 
     @Autowired
-    public JwtProviderImpl(@Qualifier("jwtUserDetailsService") UserDetailsService userDetailsService) {
+    public JwtProvider(@Qualifier("jwtUserDetailsService") UserDetailsService userDetailsService) {
         this.userDetailsService = userDetailsService;
     }
 
@@ -49,8 +52,7 @@ public class JwtProviderImpl {
     }
 
     public String provideToken(String username, Set<RolesEntity> roles) {
-        Claims claims = (Claims) Jwts
-                .claims()
+        Claims claims = (Claims) Jwts.claims()
                 .setSubject(username)
                 .put("roles", getRoleNames(roles));
 
@@ -68,7 +70,7 @@ public class JwtProviderImpl {
 
     public String resolveToken(HttpServletRequest req) {
         String bearerToken = req.getHeader("Authorization");
-        //TODO: откуда 'Bearer_' и что он значит?
+
         if (bearerToken != null && bearerToken.startsWith("Bearer_")) {
             return bearerToken.substring(tokenLength);
         }
@@ -77,15 +79,13 @@ public class JwtProviderImpl {
 
     public boolean validateToken(String token) {
         try {
-            Jws<Claims> claims = Jwts
-                    .parser()
+            Jws<Claims> claims = Jwts.parser()
                     .setSigningKey(secret)
                     .parseClaimsJws(token);
 
             return !claims
                     .getBody()
-                    .getExpiration()
-                    .before(new Date());
+                    .getExpiration().before(new Date());
         } catch (JwtException | IllegalArgumentException e) {
             throw new JwtAuthenticationException("JWT token is expired or invalid");
         }
@@ -105,8 +105,7 @@ public class JwtProviderImpl {
     }
 
     private String getUsernameByToken(String token) {
-        return Jwts
-                .parser()
+        return Jwts.parser()
                 .setSigningKey(secret)
                 .parseClaimsJws(token)
                 .getBody()

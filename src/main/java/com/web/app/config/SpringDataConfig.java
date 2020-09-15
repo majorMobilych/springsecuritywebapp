@@ -17,44 +17,109 @@ import javax.sql.DataSource;
 import java.util.Properties;
 
 /**
- * Configuration class to connect to database.
- *
- * <b>NOTE: {@code @EnableJpaRepositories} enables JPA repositories. Will scan the package of the annotated
- * configuration class for Spring Data repositories by default, so set package manually.
- * <p> Also, set entityManagerFactory.
- * </b>
+ * Configuration class, storing all necessary beans to connect to database.
  */
 @Configuration
-@EnableJpaRepositories(basePackages = "com.web.app",
-        entityManagerFactoryRef = "localContainerEntityManagerFactoryBean")
+/*
+ *  EXPLANATION: @EnableJpaRepositories enables JPA repositories. Will scan the package of the annotated
+ *              configuration class for Spring Data repositories by default, so set package manually.
+ *              Also, set entityManagerFactory and transactionManager references.
+ */
+@EnableJpaRepositories
+        (
+                basePackages = "com.web.app",
+                entityManagerFactoryRef = "localContainerEntityManagerFactoryBean",
+                transactionManagerRef = "jpaTransactionManager"
+        )
+/*
+ *  NOTE: I'm using Spring Data, and calls on Spring Data repositories are, by default,
+ *          surrounded by a transaction, even without @EnableTransactionManagement.
+ *          But, nonetheless, I use @EnableTransactionManagement to show I'm using transactions.
+ */
 @EnableTransactionManagement
+/*
+ *  EXPLANATION: @PropertySource resolves property-file, which contains all necessary database properties:
+ *              db.driver:
+ *                  Driver is an adaptor program is required for making a connection to another system
+ *                  of different type. In our case, it's PostgreSQL database,
+ *              db.url:
+ *                  A URL is a reference to a web resource (it's address) that specifies its location
+ *                  on a computer network and a mechanism for retrieving it,
+ *              db.username and
+ *              db.password
+ *                  Grants access only to one user (the database admin);
+ *
+ *               Also, this file contains hibernate-specified properties:
+ *                  hibernate.packages_to_scan:
+ *                      This property allows to resolve all classes, annotated as @Entity 'es in a specified packages.
+ *                      Set the root folder in case of project folder-structure changes,
+ *                  hibernate.dialect:
+ *                      Dialect of SQL implemented by a particular database,
+ *                  hibernate.show_sql:
+ *                      Enable logging of generated (fake) SQL to the console,
+ *                  hibernate.hbm2ddl.auto:
+ *                      Each time context is updated (i.e., app is started), there will be executed a specified action:
+ *                      CREATE or DROP or UPDATE or another (for mor info, go to 'Action' enum in
+ *                      org.hibernate.tool.schema package). We set 'none'.
+ *
+ *  NOTE: some properties are duplicated from application.properties file, but I prefer to store all properties in a
+ *          single file for each configuration class.
+ */
 @PropertySource("properties/db/springdata.properties")
 public class SpringDataConfig {
 
+    /*
+     *  EXPLANATION: @Value("${...}") injects declared property from file, declared in @PropertySource("...")
+     *              (namely, springdata.properties in our case).
+     */
     @Value("${db.driver}")
     private String driver;
 
+    /*
+     *  EXPLANATION: Inject property "db.driver" from springdata.properties file.
+     */
     @Value("${db.url}")
     private String url;
 
+    /*
+     *  EXPLANATION: Inject property "db.username" from springdata.properties file.
+     */
     @Value("${db.username}")
     private String username;
 
+    /*
+     *  EXPLANATION: Inject property "db.password" from springdata.properties file.
+     */
     @Value("${db.password}")
     private String password;
 
-    @Value("${db.packages_to_scan}")
+    /*
+     *  EXPLANATION: Inject property "hibernate.packages_to_scan" from springdata.properties file.
+     */
+    @Value("${hibernate.packages_to_scan}")
     private String packages_to_scan;
 
-    @Value("${db.dialect}")
+    /*
+     *  EXPLANATION: Inject property "hibernate.dialect" from springdata.properties file.
+     */
+    @Value("${hibernate.dialect}")
     private String dialect;
 
-    @Value("${db.show_sql}")
+    /*
+     *  EXPLANATION: Inject property "hibernate.show_sql" from springdata.properties file.
+     */
+    @Value("${hibernate.show_sql}")
     private String show_sql;
 
-    @Value("${db.enable_lazy_load_no_trans}")
+    /*
+     *  EXPLANATION: Inject property "hibernate.hbm2ddl.auto" from springdata.properties file.
+     */
+    @Value("${hibernate.hbm2ddl.auto}")
     private String enable_lazy_load_no_trans;
 
+    /*
+     *  EXPLANATION: Define datasource for database connection, set all required properties for datasource.
+     */
     @Bean
     public DataSource dataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
@@ -67,6 +132,9 @@ public class SpringDataConfig {
         return dataSource;
     }
 
+    /*
+     *  EXPLANATION: Define hibernate properties and return the properties-map.
+     */
     @Bean
     public Properties properties() {
         Properties hibernateProperties = new Properties();
@@ -78,6 +146,9 @@ public class SpringDataConfig {
         return hibernateProperties;
     }
 
+    /*
+     *  EXPLANATION: This entity-manager-factory bean is used for combining all data to connect to database.
+     */
     @Bean
     public LocalContainerEntityManagerFactoryBean localContainerEntityManagerFactoryBean(@Autowired
                                                                                                  DataSource dataSource,
@@ -95,6 +166,9 @@ public class SpringDataConfig {
         return localContainerEntityManagerFactoryBean;
     }
 
+    /*
+     *  EXPLANATION: This bean is used for transactions handling.
+     */
     @Bean
     public JpaTransactionManager jpaTransactionManager(@Autowired LocalContainerEntityManagerFactoryBean
                                                                localContainerEntityManagerFactoryBean) {

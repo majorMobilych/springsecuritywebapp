@@ -1,37 +1,41 @@
 package com.web.app.service.impl;
 
+import com.web.app.entity.AgendaEntity;
 import com.web.app.entity.RolesEntity;
 import com.web.app.entity.UsersEntity;
 import com.web.app.model.AuthenticationRequestDTO;
+import com.web.app.repository.AgendaRepository;
 import com.web.app.repository.RolesRepository;
 import com.web.app.repository.UsersRepository;
-import com.web.app.service.DefaultUsersService;
+import com.web.app.service.CommonUsersService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @PropertySource("properties/service/service.properties")
 @Slf4j
-public class DefaultUsersServiceImpl implements DefaultUsersService {
+public class CommonUsersServiceImpl implements CommonUsersService {
 
     private final UsersRepository usersRepository;
     private final RolesRepository rolesRepository;
-    //TODO: Тут чето ломается, если делать через автоваерд-конструктор, но мне так не нравится
-    private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private final PasswordEncoder passwordEncoder;
+    private final AgendaRepository agendaRepository;
 
     @Autowired
-    public DefaultUsersServiceImpl(UsersRepository usersRepository,
-                                   RolesRepository rolesRepository) {
+    public CommonUsersServiceImpl(UsersRepository usersRepository,
+                                  RolesRepository rolesRepository,
+                                  PasswordEncoder passwordEncoder,
+                                  AgendaRepository agendaRepository) {
         this.usersRepository = usersRepository;
         this.rolesRepository = rolesRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.agendaRepository = agendaRepository;
     }
 
     @Value("${user.role.default}")
@@ -60,8 +64,8 @@ public class DefaultUsersServiceImpl implements DefaultUsersService {
             return true;
         }
 
-        log.error("IN save, UsersServiceImpl.class - user, having email: " + usersEntity.getEmail() + ", or name: " +
-                usersEntity.getName() + " already exists");
+        log.error("IN save, UsersServiceImpl.class - user, having email '" + usersEntity.getEmail() + "', or name: '" +
+                usersEntity.getName() + "' already exists");
 
         return false;
     }
@@ -71,18 +75,25 @@ public class DefaultUsersServiceImpl implements DefaultUsersService {
     }
 
     @Override
-    public UsersEntity findByEmailAndPassword(AuthenticationRequestDTO authenticationRequestDTO) {
-        UsersEntity usersRepositoryByEmail = usersRepository.findByEmail(authenticationRequestDTO.getUsername());
+    public UsersEntity findByNameAndPassword(AuthenticationRequestDTO authenticationRequestDTO) {
+        UsersEntity usersEntityByName = usersRepository.findByName(authenticationRequestDTO.getName());
 
-        if (passwordEncoder.matches(authenticationRequestDTO.getPassword(), usersRepositoryByEmail.getPassword())) {
-            return usersRepositoryByEmail;
+        if (passwordEncoder.matches(authenticationRequestDTO.getPassword(), usersEntityByName.getPassword())) {
+            return usersEntityByName;
         }
-
         return null;
     }
 
     @Override
     public UsersEntity findByName(String name) {
         return usersRepository.findByName(name);
+    }
+
+    //ADDED
+    @Override
+    public Collection<AgendaEntity> findByUsersid(UsersEntity usersEntity) {
+        Collection<AgendaEntity> usersAgendaByUsersid = agendaRepository.findByUsersid(usersEntity);
+        // TODO: вот тут проверить. Где-то писали, что никогда не надо возвращать пустые коллекции.
+        return Objects.requireNonNullElseGet(usersAgendaByUsersid, ArrayList::new);
     }
 }

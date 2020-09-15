@@ -35,10 +35,13 @@ public class UsersEntity extends BaseEntity {
     @Column(name = "password", nullable = false)
     private String password;
 
+    /*
+     *  NOTE: check parameters if database was altered
+     */
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "users_to_roles",
-            joinColumns = {@JoinColumn(name = "userid", referencedColumnName = "id")},
-            inverseJoinColumns = {@JoinColumn(name = "roleid", referencedColumnName = "id")})
+            joinColumns = {@JoinColumn(name = "usersid", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name = "rolesid", referencedColumnName = "id")})
     private Set<RolesEntity> roles;
 
     @OneToMany(mappedBy = "usersid", cascade = CascadeType.ALL)

@@ -1,9 +1,6 @@
 package com.web.app.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.DayOfWeek;
@@ -30,7 +27,7 @@ public class AgendaEntity extends BaseEntity {
     private DayOfWeek day;
 
     @Basic
-    @Column(name = "time", nullable = false, length = 5)
+    @Column(name = "time", nullable = false)
     private String time;
 
     @Basic

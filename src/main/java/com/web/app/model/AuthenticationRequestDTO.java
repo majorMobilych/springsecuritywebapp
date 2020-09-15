@@ -8,6 +8,6 @@ import lombok.*;
 @Setter
 public class AuthenticationRequestDTO {
 
-    private String username;
+    private String name;
     private String password;
 }

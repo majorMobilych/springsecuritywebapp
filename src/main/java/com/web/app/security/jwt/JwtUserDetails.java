@@ -7,7 +7,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Date;
 import java.util.Set;
 
-public class JwtUser implements UserDetails {
+public class JwtUserDetails implements UserDetails {
 
     @Getter
     private final Integer id;
@@ -30,14 +30,14 @@ public class JwtUser implements UserDetails {
 
     private final Set<? extends GrantedAuthority> authorities;
 
-    public JwtUser(Integer id,
-                   Date created,
-                   Date updated,
-                   boolean validity,
-                   String email,
-                   String name,
-                   String password,
-                   Set<? extends GrantedAuthority> authorities) {
+    public JwtUserDetails(Integer id,
+                          Date created,
+                          Date updated,
+                          boolean validity,
+                          String email,
+                          String name,
+                          String password,
+                          Set<? extends GrantedAuthority> authorities) {
         this.id = id;
         this.created = created;
         this.updated = updated;

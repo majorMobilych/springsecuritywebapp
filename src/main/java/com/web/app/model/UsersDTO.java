@@ -19,6 +19,10 @@ public class UsersDTO {
     private Set<AgendaEntity> agendaEntities;
 
     public static UsersDTO EntityToDTO(UsersEntity usersEntity) {
-        return new UsersDTO(usersEntity.getName(), usersEntity.getEmail(), usersEntity.getAgendas());
+        return new UsersDTO(
+                usersEntity.getName(),
+                usersEntity.getEmail(),
+                usersEntity.getAgendas()
+        );
     }
 }
