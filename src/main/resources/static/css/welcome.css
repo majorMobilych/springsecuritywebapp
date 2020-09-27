@@ -1,14 +1,16 @@
 body {
     text-transform: uppercase;
+    padding: 0;
+    margin: 0;
     font-family: 'Montserrat', sans-serif;
     background: linear-gradient(
             to right top,
-            rgba(190,255,6,0.42) 0%,
-            rgba(140,251,52,0.5) 25%,
-            rgba(9,238,156,0.65) 50%,
-            rgba(18,198,222,0.8) 75%,
-            rgba(0,224,255,1) 100%
-    );
+            rgba(190, 255, 6, 0.42) 0%,
+            rgba(140, 251, 52, 0.5) 25%,
+            rgba(9, 238, 156, 0.65) 50%,
+            rgba(18, 198, 222, 0.8) 75%,
+            rgba(0, 224, 255, 1) 100%
+    ) no-repeat center top / cover;
 }
 
 div {

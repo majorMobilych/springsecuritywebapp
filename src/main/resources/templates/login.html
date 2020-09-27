@@ -1,125 +1,23 @@
 <html>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <link href='https://fonts.googleapis.com/css?family=Ubuntu:500' rel='stylesheet' type='text/css'>
 
 <!-- LIBS -->
-<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <title>Login page</title>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-<style>
-    body {
-        background: url('https://i.artfile.me/wallpaper/04-07-2012/1920x1080/3d-grafika-abstract-abstrakcii-abstrakci-645125.jpg');
-        margin: 0;
-        font-family: 'Ubuntu', sans-serif;
-        background-size: cover;
-    }
-
-    h1, h2, h3, h4, h5, h6, a {
-        margin: 0;
-        padding: 0;
-    }
-
-    .login {
-        margin: 0 auto;
-        max-width: 30%;
-    }
-
-    .login-header {
-        color: #fff;
-        text-align: center;
-        font-size: 300%;
-    }
-
-    .login-form {
-        border: .5px solid #fff;
-        background: #4facff;
-        border-radius: 10px;
-        box-shadow: 0 0 10px #000;
-    }
-
-    .login-form h3 {
-        text-align: left;
-        margin-left: 40px;
-        color: #fff;
-    }
-
-    .login-form {
-        box-sizing: border-box;
-        padding-top: 15px;
-        padding-bottom: 10%;
-        margin: 5% auto;
-        text-align: center;
-    }
-
-    .login input[type="text"],
-    .login input[type="password"] {
-        max-width: 400px;
-        width: 80%;
-        line-height: 3em;
-        font-family: 'Ubuntu', sans-serif;
-        margin: 1em 2em;
-        border-radius: 5px;
-        border: 2px solid #f2f2f2;
-        outline: none;
-        padding-left: 10px;
-    }
-
-    .login-form input[type="button"] {
-        height: 30px;
-        width: 100px;
-        background: #fff;
-        border: 1px solid #f2f2f2;
-        border-radius: 20px;
-        color: slategrey;
-        text-transform: uppercase;
-        font-family: 'Ubuntu', sans-serif;
-        cursor: pointer;
-    }
-
-    .sign-up {
-        color: #f2f2f2;
-        margin-left: -70%;
-        cursor: pointer;
-        text-decoration: underline;
-    }
-
-    .no-access {
-        color: #E86850;
-        margin: 20px 0 20px -57%;
-        text-decoration: underline;
-        cursor: pointer;
-    }
-
-    /*Media Querie*/
-    @media only screen and (min-width: 150px) and (max-width: 530px) {
-        .login-form h3 {
-            text-align: center;
-            margin: 0;
-        }
-
-        .sign-up, .no-access {
-            margin: 10px 0;
-        }
-
-        .login-button {
-            margin-bottom: 10px;
-        }
-    }
-</style>
+<!-- .css -->
+<link rel="stylesheet" type="text/css" href="/css/login.css"/>
 <body>
 <div class="login">
-        <h3>Name:</h3>
-        <input id="name" type="text" name="name" placeholder="name"/>
-        <br>
-        <h3>Password:</h3>
-        <input id="password" type="password" name="password" placeholder="password"/>
-        <br>
-        <input id="submit" name="submit" type="submit" value="submit"/>
-        <br>
-        <a class="sign-up">Sign Up!</a>
-        <br>
-        <h6 class="no-access">Can't access your account?</h6>
+    <h3>Name:</h3>
+    <input id="name" type="text" name="name" placeholder="name"/>
+    <br>
+    <h3>Password:</h3>
+    <input id="password" type="password" name="password" placeholder="password"/>
+    <br>
+    <input id="submit" name="submit" type="submit" value="submit"/>
+    <br>
+    <a class="sign-up">Sign Up!</a>
+    <br>
+    <h6 class="no-access">Can't access your account?</h6>
 </div>
 </body>
 
