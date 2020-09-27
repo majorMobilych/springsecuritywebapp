@@ -1,24 +1,30 @@
-<html>
-<link href='https://fonts.googleapis.com/css?family=Ubuntu:500' rel='stylesheet' type='text/css'>
+<html lang="en" dir="ltr">
+<head>
+    <title>Login page</title>
 
-<!-- LIBS -->
-<title>Login page</title>
-<!-- .css -->
-<link rel="stylesheet" type="text/css" href="/css/login.css"/>
+    <!-- Montserrat font -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800;900&display=swap" rel="stylesheet">
+    <!-- .css -->
+    <link rel="stylesheet" type="text/css" href="/css/login.css">
+    <!-- .js -->
+    <script type="text/javascript" src="/css/login.js"></script>
+</head>
 <body>
-<div class="login">
-    <h3>Name:</h3>
-    <input id="name" type="text" name="name" placeholder="name"/>
-    <br>
-    <h3>Password:</h3>
-    <input id="password" type="password" name="password" placeholder="password"/>
-    <br>
-    <input id="submit" name="submit" type="submit" value="submit"/>
-    <br>
-    <a class="sign-up">Sign Up!</a>
-    <br>
-    <h6 class="no-access">Can't access your account?</h6>
-</div>
+<header>
+    <form action="/all/login" method="post" class="login-form">
+        <h3>Name:</h3>
+        <input id="name" type="text" name="name" placeholder="name"/>
+        <br>
+        <h3>Password:</h3>
+        <input id="password" type="password" name="password" placeholder="password"/>
+        <br>
+        <input id="submit" name="submit" type="submit" value="submit"/>
+        <br>
+        <a class="sign-up">Sign Up!</a>
+        <br>
+        <h6 class="no-access">Can't access your account?</h6>
+    </form>
+</header>
 </body>
 
 <script>
