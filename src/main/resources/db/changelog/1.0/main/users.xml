@@ -36,13 +36,6 @@
             </column>
         </createTable>
 
-        <addForeignKeyConstraint baseTableName="agenda"
-                                 baseColumnNames="usersid"
-                                 constraintName="fk_agenda_user"
-                                 referencedTableName="users"
-                                 referencedColumnNames="id"
-        />
-
     </changeSet>
 
 </databaseChangeLog>

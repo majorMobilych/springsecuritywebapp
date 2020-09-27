@@ -1,0 +1,55 @@
+body {
+    text-transform: uppercase;
+    font-family: 'Montserrat', sans-serif;
+    background: linear-gradient(
+            to right top,
+            rgba(190,255,6,0.42) 0%,
+            rgba(140,251,52,0.5) 25%,
+            rgba(9,238,156,0.65) 50%,
+            rgba(18,198,222,0.8) 75%,
+            rgba(0,224,255,1) 100%
+    );
+}
+
+div {
+    box-sizing: border-box;
+}
+
+.container {
+    width: 60%;
+    margin: 0 auto;
+}
+
+.heading {
+    height: 15%;
+}
+
+nav {
+    float: right;
+    margin-top: 50px;
+}
+
+.menu {
+    padding: 0;
+    margin: 0;
+    display: block;
+    list-style-type: none;
+}
+
+.menu li {
+    float: left;
+    text-decoration: none;
+    margin-right: 50px;
+}
+
+.menu a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 100%;
+}
+
+.account_icon {
+    margin-top: 35px;
+    float: right;
+    height: 50px;
+}

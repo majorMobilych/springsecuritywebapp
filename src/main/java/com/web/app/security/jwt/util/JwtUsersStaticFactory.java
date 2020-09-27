@@ -14,7 +14,7 @@ public final class JwtUsersStaticFactory {
         throw new AssertionError("UsersStaticFactory.class can't be instantiated");
     }
 
-    public static JwtUserDetails EntityToJwt(UsersEntity usersEntity) {
+    public static JwtUserDetails entityToJwtUserDetails(UsersEntity usersEntity) {
         return new JwtUserDetails(
                 usersEntity.getId(),
                 usersEntity.getCreated(),

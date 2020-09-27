@@ -74,6 +74,7 @@ public class JwtProvider {
         if (bearerToken != null && bearerToken.startsWith("Bearer_")) {
             return bearerToken.substring(tokenLength);
         }
+
         return null;
     }
 

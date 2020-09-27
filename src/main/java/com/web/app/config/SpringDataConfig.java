@@ -11,6 +11,7 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
@@ -32,9 +33,16 @@ import java.util.Properties;
                 transactionManagerRef = "jpaTransactionManager"
         )
 /*
- *  NOTE: I'm using Spring Data, and calls on Spring Data repositories are, by default,
- *          surrounded by a transaction, even without @EnableTransactionManagement.
- *          But, nonetheless, I use @EnableTransactionManagement to show I'm using transactions.
+ *  EXPLANATION: A transaction is a unit of work that is performed against a database.
+ *              Transactions are units or sequences of work accomplished in a logical order,
+ *              whether in a manual fashion by a user.
+ *              In other words, transaction is a group of sequential commands that can be executed in order
+ *              and as a whole, or not at all. To manage transactions, we should define a transaction manager.
+ *              @EnableTransactionManagement enables transaction management.
+ *
+ *  NOTE:        I'm using Spring Data, and calls on Spring Data repositories are, by default,
+ *              surrounded by a transaction, even without @EnableTransactionManagement.
+ *              But, nonetheless, I use @EnableTransactionManagement to show I'm using transactions.
  */
 @EnableTransactionManagement
 /*
@@ -49,7 +57,7 @@ import java.util.Properties;
  *              db.password
  *                  Grants access only to one user (the database admin);
  *
- *               Also, this file contains hibernate-specified properties:
+ *              Also, this file contains hibernate-specified properties:
  *                  hibernate.packages_to_scan:
  *                      This property allows to resolve all classes, annotated as @Entity 'es in a specified packages.
  *                      Set the root folder in case of project folder-structure changes,
@@ -62,8 +70,8 @@ import java.util.Properties;
  *                      CREATE or DROP or UPDATE or another (for mor info, go to 'Action' enum in
  *                      org.hibernate.tool.schema package). We set 'none'.
  *
- *  NOTE: some properties are duplicated from application.properties file, but I prefer to store all properties in a
- *          single file for each configuration class.
+ *  NOTE:        Some properties are duplicated from application.properties file, but I prefer to store all properties
+ *              in a single file for each configuration class.
  */
 @PropertySource("properties/db/springdata.properties")
 public class SpringDataConfig {
@@ -118,18 +126,18 @@ public class SpringDataConfig {
     private String enable_lazy_load_no_trans;
 
     /*
-     *  EXPLANATION: Define datasource for database connection, set all required properties for datasource.
+     *  EXPLANATION: Create datasource for database connection and set all required properties for datasource.
      */
     @Bean
     public DataSource dataSource() {
-        DriverManagerDataSource dataSource = new DriverManagerDataSource();
+        DriverManagerDataSource driverManagerDataSource = new DriverManagerDataSource();
 
-        dataSource.setDriverClassName(driver);
-        dataSource.setUrl(url);
-        dataSource.setUsername(username);
-        dataSource.setPassword(password);
+        driverManagerDataSource.setDriverClassName(driver);
+        driverManagerDataSource.setUrl(url);
+        driverManagerDataSource.setUsername(username);
+        driverManagerDataSource.setPassword(password);
 
-        return dataSource;
+        return driverManagerDataSource;
     }
 
     /*
@@ -153,7 +161,8 @@ public class SpringDataConfig {
     public LocalContainerEntityManagerFactoryBean localContainerEntityManagerFactoryBean(@Autowired
                                                                                                  DataSource dataSource,
                                                                                          @Autowired
-                                                                                                 Properties properties) {
+                                                                                                 Properties properties)
+    {
         LocalContainerEntityManagerFactoryBean localContainerEntityManagerFactoryBean =
                 new LocalContainerEntityManagerFactoryBean();
 
@@ -168,10 +177,12 @@ public class SpringDataConfig {
 
     /*
      *  EXPLANATION: This bean is used for transactions handling.
+     *              There we need to set the EntityManagerFactory that this TransactionManager should manage
+     *              transactions.
      */
     @Bean
-    public JpaTransactionManager jpaTransactionManager(@Autowired LocalContainerEntityManagerFactoryBean
-                                                               localContainerEntityManagerFactoryBean) {
+    public PlatformTransactionManager jpaTransactionManager(@Autowired LocalContainerEntityManagerFactoryBean
+                                                                    localContainerEntityManagerFactoryBean) {
         JpaTransactionManager jpaTransactionManager = new JpaTransactionManager();
 
         jpaTransactionManager.setEntityManagerFactory(localContainerEntityManagerFactoryBean.getObject());

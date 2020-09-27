@@ -24,18 +24,18 @@ public class CommonUsersServiceImpl implements CommonUsersService {
 
     private final UsersRepository usersRepository;
     private final RolesRepository rolesRepository;
-    private final PasswordEncoder passwordEncoder;
     private final AgendaRepository agendaRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
     public CommonUsersServiceImpl(UsersRepository usersRepository,
                                   RolesRepository rolesRepository,
-                                  PasswordEncoder passwordEncoder,
-                                  AgendaRepository agendaRepository) {
+                                  AgendaRepository agendaRepository,
+                                  PasswordEncoder passwordEncoder) {
         this.usersRepository = usersRepository;
         this.rolesRepository = rolesRepository;
-        this.passwordEncoder = passwordEncoder;
         this.agendaRepository = agendaRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Value("${user.role.default}")
@@ -45,6 +45,7 @@ public class CommonUsersServiceImpl implements CommonUsersService {
         RolesEntity rolesEntity = rolesRepository.findByRole(defaultRole);
         Set<RolesEntity> defaultUserRoles = new HashSet<>();
         defaultUserRoles.add(rolesEntity);
+
         return defaultUserRoles;
     }
 
@@ -59,28 +60,32 @@ public class CommonUsersServiceImpl implements CommonUsersService {
 
             usersRepository.saveAndFlush(usersEntity);
 
-            log.info("IN registerUser - user {} successfully registered", usersEntity.getName());
+            log.info("IN CommonUsersServiceImpl.class, save(UsersEntity usersEntity) - user {} successfully registered",
+                    usersEntity.getName());
 
             return true;
         }
 
-        log.error("IN save, UsersServiceImpl.class - user, having email '" + usersEntity.getEmail() + "', or name: '" +
-                usersEntity.getName() + "' already exists");
+        log.info("IN CommonUsersServiceImpl.class, save(UsersEntity usersEntity) - user, having email '{}', " +
+                "or name: '{}' already exists", usersEntity.getEmail(), usersEntity.getName());
 
         return false;
     }
 
     private boolean isUserValidForSaving(UsersEntity usersEntity) {
-        return usersRepository.findByEmailOrName(usersEntity.getEmail(), usersEntity.getName()) == null;
+        return usersRepository.findByName(usersEntity.getEmail()) == null;
     }
 
     @Override
     public UsersEntity findByNameAndPassword(AuthenticationRequestDTO authenticationRequestDTO) {
-        UsersEntity usersEntityByName = usersRepository.findByName(authenticationRequestDTO.getName());
+        UsersEntity usersEntityByName = findByName(authenticationRequestDTO.getName());
 
-        if (passwordEncoder.matches(authenticationRequestDTO.getPassword(), usersEntityByName.getPassword())) {
-            return usersEntityByName;
+        if (usersEntityByName != null) {
+            if (passwordEncoder.matches(authenticationRequestDTO.getPassword(), usersEntityByName.getPassword())) {
+                return usersEntityByName;
+            }
         }
+
         return null;
     }
 
@@ -89,11 +94,10 @@ public class CommonUsersServiceImpl implements CommonUsersService {
         return usersRepository.findByName(name);
     }
 
-    //ADDED
     @Override
     public Collection<AgendaEntity> findByUsersid(UsersEntity usersEntity) {
         Collection<AgendaEntity> usersAgendaByUsersid = agendaRepository.findByUsersid(usersEntity);
-        // TODO: вот тут проверить. Где-то писали, что никогда не надо возвращать пустые коллекции.
+
         return Objects.requireNonNullElseGet(usersAgendaByUsersid, ArrayList::new);
     }
 }

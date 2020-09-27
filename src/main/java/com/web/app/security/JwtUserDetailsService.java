@@ -1,9 +1,8 @@
 package com.web.app.security;
 
 import com.web.app.entity.UsersEntity;
-import com.web.app.security.jwt.JwtUserDetails;
-import com.web.app.service.CommonUsersService;
 import com.web.app.security.jwt.util.JwtUsersStaticFactory;
+import com.web.app.service.CommonUsersService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -27,12 +26,13 @@ public class JwtUserDetailsService implements UserDetailsService {
         UsersEntity usersEntity = commonUsersService.findByName(username);
 
         if (usersEntity == null) {
-            throw new UsernameNotFoundException("IN loadUserByUsername - user, having userName'" + username + "' " +
-                    "doesn't exists");
+            throw new UsernameNotFoundException("IN JwtUserDetailsService.class, loadUserByUsername(String username) " +
+                    "- user, having username '" + username + "'doesn't exists");
         }
-        JwtUserDetails jwtUserDetails = JwtUsersStaticFactory.EntityToJwt(usersEntity);
 
-        log.info("IN loadUserByUsername - user, having userName: {} successfully loaded", username);
-        return jwtUserDetails;
+        log.info("IN JwtUserDetailsService.class, loadUserByUsername(String username) - user, having userName: " +
+                "{} successfully loaded", username);
+
+        return JwtUsersStaticFactory.entityToJwtUserDetails(usersEntity);
     }
 }

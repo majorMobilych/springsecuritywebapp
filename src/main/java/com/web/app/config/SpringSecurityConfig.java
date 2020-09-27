@@ -3,23 +3,29 @@ package com.web.app.config;
 import com.web.app.security.jwt.configurers.JwtConfigurer;
 import com.web.app.security.jwt.providers.JwtProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
 @Configuration
 @EnableWebSecurity
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final JwtProvider jwtProvider;
+    private final UserDetailsService userDetailsService;
 
     @Autowired
-    public SpringSecurityConfig(JwtProvider jwtProvider) {
+    public SpringSecurityConfig(JwtProvider jwtProvider,
+                                @Qualifier("jwtUserDetailsService") UserDetailsService userDetailsService) {
         this.jwtProvider = jwtProvider;
+        this.userDetailsService = userDetailsService;
     }
 
     @Bean
@@ -28,23 +34,35 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Override
+    protected void configure(AuthenticationManagerBuilder auth) {
+        try {
+            auth.userDetailsService(userDetailsService);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
     public void configure(HttpSecurity httpSecurity) throws Exception {
-        /* TODO: исправить если что */
-        CookieCsrfTokenRepository cookieCsrfTokenRepository = new CookieCsrfTokenRepository();
-        cookieCsrfTokenRepository.setCookieHttpOnly(true);
-        /* TODO: Почему мы тут не делаем автоваерд для JwtConfigurer? */
         httpSecurity
-                .csrf()
-                /*.csrfTokenRepository(cookieCsrfTokenRepository)*/
-                .disable()
-                /*.and()*/
+                .httpBasic().disable()
+                .csrf().disable()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
                 .authorizeRequests()
-                .antMatchers("/").permitAll()
-                .antMatchers("/misha/login").permitAll()
+                /* resources */
+                .antMatchers(
+                        "/css/**",
+                                "/js/**"
+                ).permitAll()
+                /* @GET api */
+                .antMatchers("/welcome").permitAll()
+                /* @POST api */
+                .antMatchers("/all/login").permitAll()
+                .anyRequest().authenticated()
                 .and()
                 .formLogin()
                 .loginPage("/login").permitAll()
-                .defaultSuccessUrl("/success", true)
                 .and()
                 .apply(new JwtConfigurer(jwtProvider));
     }

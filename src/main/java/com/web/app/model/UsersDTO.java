@@ -9,11 +9,18 @@ import lombok.Setter;
 
 import java.util.Set;
 
+/**
+ * A DTO class, representing a login request, i.e. name and password.
+ */
+/*
+ *  NOTE: Need no-args constructor for any DTO class.
+ */
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 public class UsersDTO {
+
     private String name;
     private String email;
     private Set<AgendaEntity> agendaEntities;

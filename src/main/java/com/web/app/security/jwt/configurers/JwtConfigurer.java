@@ -20,10 +20,6 @@ public class JwtConfigurer extends SecurityConfigurerAdapter<DefaultSecurityFilt
 
     @Override
     public void configure(HttpSecurity httpSecurity) {
-        /*  TODO:
-             1. Не выкупаю - почему мы пишем new JwtFilter(JwtProvider) - ?, почему не
-                @Autowired JwtFilter genericFilterBean (автоваерд по классу, чтоб не мучаться с квалифаерами если что)
-                genericFilterBean вроде как будет сконфишурировани и все будет ок? */
         GenericFilterBean genericFilterBean = new JwtFilter(JwtProvider);
         httpSecurity.addFilterBefore(genericFilterBean, UsernamePasswordAuthenticationFilter.class);
     }

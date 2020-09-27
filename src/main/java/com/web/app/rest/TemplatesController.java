@@ -17,7 +17,7 @@ public class TemplatesController {
     }
 
     @GetMapping("/success")
-    public String  success() {
+    public String success() {
         return "success";
     }
 }
