@@ -1,3 +1,4 @@
+/*
 package com.web.app.security.jwt.filters;
 
 import com.web.app.security.jwt.providers.JwtProvider;
@@ -47,3 +48,4 @@ public class JwtFilter extends GenericFilterBean {
         filterChain.doFilter(req, res);
     }
 }
+ */

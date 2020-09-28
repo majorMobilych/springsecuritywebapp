@@ -17,22 +17,14 @@ div {
     box-sizing: border-box;
 }
 
-.login {
+.container {
+    width: 60%;
     margin: 0 auto;
-    max-width: 30%;
-}
-
-.login-header {
-    color: #fff;
-    text-align: center;
-    font-size: 300%;
 }
 
 .login-form {
-    border: .5px solid #fff;
-    background: #4facff;
-    border-radius: 10px;
-    box-shadow: 0 0 10px #000;
+    width: 60%;
+    background: transparent;
 }
 
 .login-form h3 {

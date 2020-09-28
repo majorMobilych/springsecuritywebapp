@@ -7,23 +7,27 @@
     <!-- .css -->
     <link rel="stylesheet" type="text/css" href="/css/login.css">
     <!-- .js -->
-    <script type="text/javascript" src="/css/login.js"></script>
+    <script type="text/javascript" src="/js/login.js"></script>
 </head>
 <body>
 <header>
-    <form action="/all/login" method="post" class="login-form">
-        <h3>Name:</h3>
-        <input id="name" type="text" name="name" placeholder="name"/>
-        <br>
-        <h3>Password:</h3>
-        <input id="password" type="password" name="password" placeholder="password"/>
-        <br>
-        <input id="submit" name="submit" type="submit" value="submit"/>
-        <br>
-        <a class="sign-up">Sign Up!</a>
-        <br>
-        <h6 class="no-access">Can't access your account?</h6>
-    </form>
+    <div class="container">
+        <h1>Please login</h1>
+        <!--TODO потом переделать-->
+        <form action="/all/login" method="post" class="login-form">
+            <h3>Name:</h3>
+            <input id="name" type="text" name="name" placeholder="name"/>
+            <br>
+            <h3>Password:</h3>
+            <input id="password" type="password" name="password" placeholder="password"/>
+            <br>
+            <input id="submit" name="submit" type="submit" value="submit"/>
+            <br>
+            <a class="sign-up">Sign Up!</a>
+            <br>
+            <h6 class="no-access">Can't access your account?</h6>
+        </form>
+    </div>
 </header>
 </body>
 

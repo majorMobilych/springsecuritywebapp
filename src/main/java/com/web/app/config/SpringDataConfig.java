@@ -158,11 +158,14 @@ public class SpringDataConfig {
      *  EXPLANATION: This entity-manager-factory bean is used for combining all data to connect to database.
      */
     @Bean
-    public LocalContainerEntityManagerFactoryBean localContainerEntityManagerFactoryBean(@Autowired
-                                                                                                 DataSource dataSource,
-                                                                                         @Autowired
-                                                                                                 Properties properties)
-    {
+    /*
+     *  EXPLANATION: @Autowired above methods means that annotated methods may have
+     *              an arbitrary name and any number of arguments; each of those arguments will be autowired
+     *              with a matching bean in the Spring container.
+     */
+    @Autowired
+    public LocalContainerEntityManagerFactoryBean localContainerEntityManagerFactoryBean(DataSource dataSource,
+                                                                                         Properties properties) {
         LocalContainerEntityManagerFactoryBean localContainerEntityManagerFactoryBean =
                 new LocalContainerEntityManagerFactoryBean();
 
@@ -181,7 +184,11 @@ public class SpringDataConfig {
      *              transactions.
      */
     @Bean
-    public PlatformTransactionManager jpaTransactionManager(@Autowired LocalContainerEntityManagerFactoryBean
+    /*
+     *  ...
+     */
+    @Autowired
+    public PlatformTransactionManager jpaTransactionManager(LocalContainerEntityManagerFactoryBean
                                                                     localContainerEntityManagerFactoryBean) {
         JpaTransactionManager jpaTransactionManager = new JpaTransactionManager();
 

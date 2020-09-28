@@ -1,45 +1,73 @@
 package com.web.app.config;
 
-import com.web.app.security.jwt.configurers.JwtConfigurer;
-import com.web.app.security.jwt.providers.JwtProvider;
+import com.web.app.security.newjwt.JwtUsernamePasswordAuthenticationFilter;
+import com.web.app.security.newjwt.JwtVerifier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
+/**
+ * Configuration class, setting up the app's security config.
+ */
 @Configuration
+/*
+ *  EXPLANATION: @EnableWebSecurity enables to have the Spring Security configuration defined in any
+ *              {@link WebSecurityConfigurer} or more likely by extending the {@link WebSecurityConfigurerAdapter} base
+ *              class and overriding individual methods.
+ */
 @EnableWebSecurity
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final JwtProvider jwtProvider;
     private final UserDetailsService userDetailsService;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public SpringSecurityConfig(JwtProvider jwtProvider,
-                                @Qualifier("jwtUserDetailsService") UserDetailsService userDetailsService) {
-        this.jwtProvider = jwtProvider;
+    public SpringSecurityConfig(
+            /*
+             *  EXPLANATION: @Qualifier("jwtUserDetailsService") defines, which UserDetailsService will be passed as
+             *              param to this constructor(there are several classes, implementing UserDetailsService,
+             *              running at the same time), we need our custom implementation of UserDetailsService.
+             */
+            @Qualifier("jwtUserDetailsService") UserDetailsService userDetailsService,
+            PasswordEncoder passwordEncoder) {
         this.userDetailsService = userDetailsService;
+        this.passwordEncoder = passwordEncoder;
     }
 
+    /*
+     *  EXPLANATION: Specify AuthenticationProvider There we set passwordEncoder
+     *              {from our PasswordEncodingConfig class},
+     *              our custom UserDetailsService {JwtUserDetailsService class}.
+     *
+     *  NOTE:        Create a bean out of this method, because we may want to use it somewhere else.
+     */
     @Bean
-    public AuthenticationManager authenticationManager() throws Exception {
-        return super.authenticationManager();
+    public AuthenticationProvider daoAuthenticationProvider() {
+        DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
+
+        daoAuthenticationProvider.setPasswordEncoder(passwordEncoder);
+        daoAuthenticationProvider.setUserDetailsService(userDetailsService);
+
+        return daoAuthenticationProvider;
     }
 
+    /*
+     *  EXPLANATION: Set AuthenticationProvider in AuthenticationManagerBuilder.
+     *
+     */
     @Override
     protected void configure(AuthenticationManagerBuilder auth) {
-        try {
-            auth.userDetailsService(userDetailsService);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        auth.authenticationProvider(daoAuthenticationProvider());
     }
 
     @Override
@@ -49,24 +77,36 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
+                .addFilter(
+                        new JwtUsernamePasswordAuthenticationFilter
+                                (
+                                        /*
+                                         *  NOTE: this method called from WebSecurityConfigurerAdapter class
+                                         */
+                                        authenticationManager()
+                                )
+                )
+                .addFilterAfter(new JwtVerifier(), JwtUsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
 
                 /* resources */
                 .antMatchers(
                         "/css/**",
-                                "/js/**"
+                        "/js/**"
                 ).permitAll()
 
                 /* @GET api */
-                .antMatchers("/welcome").permitAll()
+                .antMatchers(
+                        "/welcome",
+                        "/all/login"
+                ).permitAll()
 
                 /* @POST api */
                 .antMatchers("/all/login").permitAll()
-                .anyRequest().authenticated()
-                .and()
-                .formLogin()
-                .loginPage("/login").permitAll()
-                .and()
-                .apply(new JwtConfigurer(jwtProvider));
+
+                /*  All other requests should be available for authenticated users(for those, who entered
+                 *  username and password)
+                 */
+                .anyRequest().authenticated();
     }
 }

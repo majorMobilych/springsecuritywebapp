@@ -1,3 +1,4 @@
+/*
 package com.web.app.security.jwt.exceptions;
 
 import org.springframework.security.core.AuthenticationException;
@@ -12,3 +13,4 @@ public class JwtAuthenticationException extends AuthenticationException {
         super(msg);
     }
 }
+*/
