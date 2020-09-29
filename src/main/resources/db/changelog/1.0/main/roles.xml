@@ -4,8 +4,8 @@
                         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd"
                    objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
 
-    <!-- CREATE TABLE ROLES -->
     <changeSet id="1.0.0" author="provider">
+        <!-- CREATE TABLE ROLES -->
         <createTable tableName="roles">
             <column name="id" type="SERIAL">
                 <constraints primaryKey="true"/>
@@ -23,6 +23,7 @@
                 <constraints unique="true" nullable="false"/>
             </column>
         </createTable>
+
     </changeSet>
 
 </databaseChangeLog>
