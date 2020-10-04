@@ -6,10 +6,14 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
+/**
+ * A repository class, working with table 'users' from my database, using Spring Data JPA.
+ */
 @Repository
 public interface UsersRepository extends JpaRepository<UsersEntity, Integer> {
 
+    /*
+     *  EXPLANATION: returns a UsersEntity, having a specified name.
+     */
     UsersEntity findByName(String name);
-
-    UsersEntity findByEmail(String email);
 }

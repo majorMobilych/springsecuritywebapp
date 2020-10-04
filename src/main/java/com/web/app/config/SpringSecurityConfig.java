@@ -1,12 +1,11 @@
 package com.web.app.config;
 
-import com.web.app.security.newjwt.JwtUsernamePasswordAuthenticationFilter;
-import com.web.app.security.newjwt.JwtVerifier;
+import com.web.app.security.jwt.JwtUsernamePasswordAuthenticationFilter;
+import com.web.app.security.jwt.JwtVerifier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -30,8 +29,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final UserDetailsService userDetailsService;
+
     private final PasswordEncoder passwordEncoder;
-    private final JwtUsernamePasswordAuthenticationFilter jwtUsernamePasswordAuthenticationFilter;
 
     @Autowired
     public SpringSecurityConfig(
@@ -41,11 +40,9 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
              *              running at the same time), we need our custom implementation of UserDetailsService.
              */
             @Qualifier("jwtUserDetailsService") UserDetailsService userDetailsService,
-            PasswordEncoder passwordEncoder,
-            JwtUsernamePasswordAuthenticationFilter jwtUsernamePasswordAuthenticationFilter) {
+            PasswordEncoder passwordEncoder) {
         this.userDetailsService = userDetailsService;
         this.passwordEncoder = passwordEncoder;
-        this.jwtUsernamePasswordAuthenticationFilter = jwtUsernamePasswordAuthenticationFilter;
     }
 
     /*
@@ -56,7 +53,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
      *  NOTE:        Create a bean out of this method, because we may want to use it somewhere else.
      */
     @Bean
-    public AuthenticationProvider daoAuthenticationProvider() {
+    public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
 
         daoAuthenticationProvider.setPasswordEncoder(passwordEncoder);
@@ -67,22 +64,10 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
     /*
      *  EXPLANATION: Set AuthenticationProvider in AuthenticationManagerBuilder.
-     *
      */
     @Override
     protected void configure(AuthenticationManagerBuilder auth) {
-        auth.authenticationProvider(daoAuthenticationProvider());
-    }
-
-    @Bean
-    @Override
-    public AuthenticationManager authenticationManager() {
-        try {
-            return super.authenticationManager();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        throw new RuntimeException();
+        auth.authenticationProvider(authenticationProvider());
     }
 
     @Override
@@ -113,7 +98,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 /* @GET api */
                 .antMatchers(
                         "/welcome",
-                        "/all/login"
+                        "/login"
                 ).permitAll()
 
                 /* @POST api */

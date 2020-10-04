@@ -1,4 +1,4 @@
-<html lang="en" dir="ltr">
+<html lang="en" dir="ltr" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
 <head>
     <title>Login page</title>
 
@@ -8,40 +8,66 @@
     <link rel="stylesheet" type="text/css" href="/css/login.css">
     <!-- .js -->
     <script type="text/javascript" src="/js/login.js"></script>
+    <!-- libs -->
+    <!--jQuery-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 </head>
 <body>
 <header>
     <div class="container">
         <h1>Please login</h1>
         <!--TODO потом переделать-->
-        <form action="/all/login" method="post" class="login-form">
-            <h3>Name:</h3>
-            <input id="name" type="text" name="name" placeholder="name"/>
-            <br>
-            <h3>Password:</h3>
-            <input id="password" type="password" name="password" placeholder="password"/>
-            <br>
-            <input id="submit" name="submit" type="submit" value="submit"/>
-            <br>
-            <a class="sign-up">Sign Up!</a>
-            <br>
-            <h6 class="no-access">Can't access your account?</h6>
-        </form>
+        <h3>Name:</h3>
+        <input id="name" type="text" name="name" placeholder="name"/>
+        <br>
+        <h3>Password:</h3>
+        <input id="password" type="password" name="password" placeholder="password"/>
+        <br>
+        <button id="submit">Submiit</button>
+        <br>
+        <a class="sign-up">Sign Up!</a>
+        <br>
+        <h6 class="no-access">Can't access your account?</h6>
     </div>
 </header>
 </body>
 
 <script>
-
-    $('.login-button , .no-access').click(function () {
-        $('.login').slideUp(500);
-        $('.error-page').slideDown(1000);
-    });
-
-    $('.try-again').click(function () {
-        $('.error-page').hide(0);
-        $('.login').slideDown(1000);
-    });
+    document.getElementById("submit")
+        .addEventListener('click',
+            () => {
+                $.post(
+                    {
+                        url:
+                            '/login',
+                        contentType:
+                            "application/json; charset=UTF-8",
+                        <!-- TODO: почему тут мим html -->
+                        mimeType:
+                            "text/html; charset=UTF-8",
+                        scriptCharset:
+                            "utf-8",
+                        data:
+                            JSON.stringify(
+                                {
+                                    "name":
+                                        $("#name").val(),
+                                    "password":
+                                        $("#password").val()
+                                }
+                            ),
+                        success: function () {
+                            console.log("success");
+                        },
+                        error: function (jqXHR, textStatus, errorThrown) {
+                            alert(jqXHR);
+                            alert(textStatus);
+                            alert(errorThrown);
+                        }
+                    }
+                );
+            }
+        )
 </script>
 
 </html>

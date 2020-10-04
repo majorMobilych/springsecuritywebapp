@@ -9,11 +9,15 @@ import lombok.*;
  *  NOTE: Need no-args constructor for any DTO class.
  */
 @NoArgsConstructor
+/*
+ *  ...
+ */
 @AllArgsConstructor
 @Getter
 @Setter
 public class AuthenticationRequestDTO {
 
     private String name;
+
     private String password;
 }

@@ -45,30 +45,49 @@ public class AgendaEntity extends BaseEntity {
      */
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     /*
-     *  ...
+     *  EXPLANATION: @Column specifies name for this field in database.
      */
     @Column(name = "id")
     private Long id;
 
     /*
-     *  EXPLANATION:
+     *  EXPLANATION: @ManyToOne Specifies a single-valued association to another entity class that has
+     *              many-to-one multiplicity.
+     *                  In other words, one user may have lots of agendas, but any agenda corresponds to a single user,
+     *              we refer to this particular user by his id and @JoinColumn indicates this.
      */
     @ManyToOne
     @JoinColumn(name = "usersid")
     private UsersEntity usersid;
 
+    /*
+     *  EXPLANATION: @Enumerated Specifies that a field should be persisted as an enumerated type,
+     *              days of week are enumerable: MONDAY, TUESDAY, ... .
+     */
     @Enumerated(EnumType.STRING)
     @Column(name = "day")
     private DayOfWeek day;
 
+    /*
+     *  EXPLANATION: @Basic specifies that a field in database has no special properties.
+     */
     @Basic
+    /*
+     * ... . Also note, that property 'nullable' defines if this field can be null or not. Set it to 'false'.
+     */
     @Column(name = "time", nullable = false)
     private String time;
 
+    /*
+     *  ...
+     */
     @Basic
     @Column(name = "privacy", nullable = false)
     private boolean privacy;
 
+    /*
+     *  ...
+     */
     @Basic
     @Column(name = "note", nullable = false)
     private String note;

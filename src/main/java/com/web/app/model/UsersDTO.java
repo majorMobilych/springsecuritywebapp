@@ -10,7 +10,7 @@ import lombok.Setter;
 import java.util.Set;
 
 /**
- * A DTO class, representing a login request, i.e. name and password.
+ * A DTO class.
  */
 /*
  *  NOTE: Need no-args constructor for any DTO class.
@@ -22,7 +22,9 @@ import java.util.Set;
 public class UsersDTO {
 
     private String name;
+
     private String email;
+
     private Set<AgendaEntity> agendaEntities;
 
     public static UsersDTO EntityToDTO(UsersEntity usersEntity) {

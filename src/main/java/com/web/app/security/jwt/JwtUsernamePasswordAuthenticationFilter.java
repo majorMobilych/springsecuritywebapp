@@ -1,18 +1,15 @@
-package com.web.app.security.newjwt;
+package com.web.app.security.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.web.app.model.AuthenticationRequestDTO;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.stereotype.Component;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -22,20 +19,16 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Date;
 
-@Component
 @PropertySource("properties/security/jwt.properties")
 public class JwtUsernamePasswordAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
 
-    @Autowired
     public JwtUsernamePasswordAuthenticationFilter(AuthenticationManager authenticationManager) {
         this.authenticationManager = authenticationManager;
     }
 
-    //TODO сикрет не инджектится
-    @Value("${jwt.secret}")
-    private String secret;
+    private String secret = "secret";
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request,

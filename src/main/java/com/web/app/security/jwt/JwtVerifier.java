@@ -1,11 +1,10 @@
-package com.web.app.security.newjwt;
+package com.web.app.security.jwt;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import org.assertj.core.util.Strings;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -26,9 +25,7 @@ import java.util.stream.Collectors;
 @PropertySource("properties/security/jwt.properties")
 public class JwtVerifier extends OncePerRequestFilter {
 
-    //TODO: ТУТ СИКРЕТ НЕ ЗАИДЖЕКТИЛСЯ
-    @Value("${jwt.secret}")
-    private String secret;
+    private String secret = "secret";
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
