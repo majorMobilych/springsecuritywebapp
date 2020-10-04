@@ -1,4 +1,4 @@
-<html lang="en" dir="ltr" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
+<html lang="en" dir="ltr" xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <title>Login page</title>
 
@@ -8,9 +8,11 @@
     <link rel="stylesheet" type="text/css" href="/css/login.css">
     <!-- .js -->
     <script type="text/javascript" src="/js/login.js"></script>
+
     <!-- libs -->
+
     <!--jQuery-->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js" type="text/javascript"></script>
 </head>
 <body>
 <header>
@@ -31,43 +33,46 @@
     </div>
 </header>
 </body>
-
 <script>
-    document.getElementById("submit")
-        .addEventListener('click',
-            () => {
-                $.post(
-                    {
-                        url:
-                            '/login',
-                        contentType:
-                            "application/json; charset=UTF-8",
-                        <!-- TODO: почему тут мим html -->
-                        mimeType:
-                            "text/html; charset=UTF-8",
-                        scriptCharset:
-                            "utf-8",
-                        data:
-                            JSON.stringify(
-                                {
-                                    "name":
-                                        $("#name").val(),
-                                    "password":
-                                        $("#password").val()
-                                }
-                            ),
-                        success: function () {
-                            console.log("success");
-                        },
-                        error: function (jqXHR, textStatus, errorThrown) {
-                            alert(jqXHR);
-                            alert(textStatus);
-                            alert(errorThrown);
+    $(document).ready(function () {
+            $('#submit').click(function () {
+                    alert('qwe');
+                    $.post(
+                        {
+                            url:
+                                '/login',
+                            contentType:
+                                "application/json; charset=UTF-8",
+                            <!-- TODO: почему тут мим html -->
+                            mimeType:
+                                "text/html; charset=UTF-8",
+                            scriptCharset:
+                                "utf-8",
+                            data:
+                                JSON.stringify(
+                                    {
+                                        "name":
+                                            $("#name").val(),
+                                        "password":
+                                            $("#password").val()
+                                    }
+                                ),
+                            success: function (data, textStatus, request) {
+                                localStorage.setItem('Authorization', request.getResponseHeader('Authorization'));
+                                $.ajaxSetup({
+                                    headers: { "Authorization": localStorage.getItem('Authorization') }
+                                });
+                            },
+                            error: function (jqXHR, textStatus, errorThrown) {
+                                alert(jqXHR);
+                                alert(textStatus);
+                                alert(errorThrown);
+                            }
                         }
-                    }
-                );
-            }
-        )
+                    )
+                }
+            );
+        }
+    );
 </script>
-
 </html>
