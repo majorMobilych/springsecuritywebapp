@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 @PropertySource("properties/security/jwt.properties")
 public class JwtVerifier extends OncePerRequestFilter {
 
+    //todo переделать
     private String secret = "secret";
 
     @Override
@@ -47,7 +48,7 @@ public class JwtVerifier extends OncePerRequestFilter {
 
             Claims body = claimsJws.getBody();
 
-            String username = body.getSubject();
+            String name = body.getSubject();
 
             var authorities = (List<Map<String, String>>) body.get("authorities");
             Set<SimpleGrantedAuthority> simpleGrantedAuthorities = authorities.stream()
@@ -55,7 +56,7 @@ public class JwtVerifier extends OncePerRequestFilter {
                     .collect(Collectors.toSet());
 
             Authentication authentication = new UsernamePasswordAuthenticationToken(
-                    username,
+                    name,
                     null,
                     simpleGrantedAuthorities
             );

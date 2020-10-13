@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
+import java.util.Set;
 
 /**
  * A repository class, working with table 'agenda' from my database, using Spring Data JPA.
@@ -21,5 +22,5 @@ public interface AgendaRepository extends JpaRepository<AgendaEntity, Long> {
     /*
      *  EXPLANATION: returns all specified user's agenda.
      */
-    Collection<AgendaEntity> findByUsersid(UsersEntity usersEntity);
+    Set<AgendaEntity> findByUsersid(UsersEntity usersEntity);
 }

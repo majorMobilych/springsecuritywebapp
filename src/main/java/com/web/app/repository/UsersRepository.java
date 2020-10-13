@@ -16,4 +16,10 @@ public interface UsersRepository extends JpaRepository<UsersEntity, Integer> {
      *  EXPLANATION: returns a UsersEntity, having a specified name.
      */
     UsersEntity findByName(String name);
+
+    /*
+     *  EXPLANATION: this method is used in validation for saving user in database. If there is no user in database,
+     *              having specified name and email, the we can save this user. Else, we cant
+     */
+    Optional<UsersEntity> findByEmailAndName(String email, String name);
 }

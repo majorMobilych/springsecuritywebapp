@@ -1,10 +1,9 @@
 package com.web.app.security.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.web.app.model.AuthenticationRequestDTO;
+import com.web.app.model.request.SignInRequestDTO;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -19,7 +18,6 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Date;
 
-@PropertySource("properties/security/jwt.properties")
 public class JwtUsernamePasswordAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
@@ -28,19 +26,21 @@ public class JwtUsernamePasswordAuthenticationFilter extends UsernamePasswordAut
         this.authenticationManager = authenticationManager;
     }
 
+    //todo переделать
     private String secret = "secret";
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request,
                                                 HttpServletResponse response) throws AuthenticationException {
         try {
-            AuthenticationRequestDTO authenticationRequestDTO = new ObjectMapper()
-                    .readValue(request.getInputStream(), AuthenticationRequestDTO.class);
+            SignInRequestDTO signInRequestDTO = new ObjectMapper()
+                    .readValue(request.getInputStream(), SignInRequestDTO.class);
 
             Authentication authentication = new UsernamePasswordAuthenticationToken(
-                    authenticationRequestDTO.getName(),
-                    authenticationRequestDTO.getPassword()
+                    signInRequestDTO.getName(),
+                    signInRequestDTO.getPassword()
             );
+
             return authenticationManager.authenticate(authentication);
 
         } catch (IOException e) {

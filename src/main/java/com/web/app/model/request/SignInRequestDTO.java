@@ -1,4 +1,4 @@
-package com.web.app.model;
+package com.web.app.model.request;
 
 import lombok.*;
 
@@ -15,7 +15,7 @@ import lombok.*;
 @AllArgsConstructor
 @Getter
 @Setter
-public class AuthenticationRequestDTO {
+public class SignInRequestDTO {
 
     private String name;
 

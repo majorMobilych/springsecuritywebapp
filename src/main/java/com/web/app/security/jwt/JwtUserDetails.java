@@ -5,7 +5,9 @@ import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.io.IOException;
 import java.util.Date;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -68,5 +70,14 @@ public class JwtUserDetails implements UserDetails {
     @Override
     public Set<? extends GrantedAuthority> getAuthorities() {
         return authorities;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof JwtUserDetails) {
+            JwtUserDetails jwtUserDetails = (JwtUserDetails) o;
+            return Objects.equals(this.name, jwtUserDetails.getUsername());
+        }
+        return false;
     }
 }

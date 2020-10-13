@@ -1,2 +1,4 @@
 # Project exclude paths
 /target/
+#TODO ИСПРАВИТЬ ПО НЕОБХОДИМОСТИ
+src/main/resources/static/node_modules

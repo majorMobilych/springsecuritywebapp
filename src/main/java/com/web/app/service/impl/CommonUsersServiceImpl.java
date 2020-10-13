@@ -3,7 +3,8 @@ package com.web.app.service.impl;
 import com.web.app.entity.AgendaEntity;
 import com.web.app.entity.RolesEntity;
 import com.web.app.entity.UsersEntity;
-import com.web.app.model.AuthenticationRequestDTO;
+import com.web.app.model.request.SignInRequestDTO;
+import com.web.app.model.request.SignUpRequestDTO;
 import com.web.app.repository.AgendaRepository;
 import com.web.app.repository.RolesRepository;
 import com.web.app.repository.UsersRepository;
@@ -43,6 +44,7 @@ public class CommonUsersServiceImpl implements CommonUsersService {
 
     private Set<RolesEntity> getDefaultUserRole() {
         RolesEntity rolesEntity = rolesRepository.findByRole(defaultRole);
+
         Set<RolesEntity> defaultUserRoles = new HashSet<>();
         defaultUserRoles.add(rolesEntity);
 
@@ -50,43 +52,31 @@ public class CommonUsersServiceImpl implements CommonUsersService {
     }
 
     @Override
-    public boolean save(UsersEntity usersEntity) {
+    public boolean save(SignUpRequestDTO signUpRequestDTO) {
         Set<RolesEntity> defaultRolesEntity = getDefaultUserRole();
 
-        if (isUserValidForSaving(usersEntity)) {
-            usersEntity.setPassword(passwordEncoder.encode(usersEntity.getPassword()));
-            usersEntity.setRoles(defaultRolesEntity);
-            usersEntity.setValidity(true);
+        if (isUserValidForSaving(signUpRequestDTO)) {
+            UsersEntity userToSave = new UsersEntity();
+            userToSave.setPassword(passwordEncoder.encode(signUpRequestDTO.getPassword()));
+            userToSave.setRoles(defaultRolesEntity);
+            userToSave.setValidity(true);
 
-            usersRepository.saveAndFlush(usersEntity);
+            usersRepository.saveAndFlush(userToSave);
 
             log.info("IN CommonUsersServiceImpl.class, save(UsersEntity usersEntity) - user {} successfully registered",
-                    usersEntity.getName());
+                    userToSave.getName());
 
             return true;
         }
 
         log.info("IN CommonUsersServiceImpl.class, save(UsersEntity usersEntity) - user, having email '{}', " +
-                "or name: '{}' already exists", usersEntity.getEmail(), usersEntity.getName());
+                "or name: '{}' already exists", signUpRequestDTO.getEmail(), signUpRequestDTO.getName());
 
         return false;
     }
 
-    private boolean isUserValidForSaving(UsersEntity usersEntity) {
-        return usersRepository.findByName(usersEntity.getEmail()) == null;
-    }
-
-    @Override
-    public UsersEntity findByNameAndPassword(AuthenticationRequestDTO authenticationRequestDTO) {
-        UsersEntity usersEntityByName = findByName(authenticationRequestDTO.getName());
-
-        if (usersEntityByName != null) {
-            if (passwordEncoder.matches(authenticationRequestDTO.getPassword(), usersEntityByName.getPassword())) {
-                return usersEntityByName;
-            }
-        }
-
-        return null;
+    private boolean isUserValidForSaving(SignUpRequestDTO signUpRequestDTO) {
+        return usersRepository.findByEmailAndName(signUpRequestDTO.getEmail(), signUpRequestDTO.getName()).isEmpty();
     }
 
     @Override
@@ -95,9 +85,13 @@ public class CommonUsersServiceImpl implements CommonUsersService {
     }
 
     @Override
-    public Collection<AgendaEntity> findByUsersid(UsersEntity usersEntity) {
-        Collection<AgendaEntity> usersAgendaByUsersid = agendaRepository.findByUsersid(usersEntity);
+    public Set<AgendaEntity> findByUsersid(UsersEntity usersEntity) {
+        Set<AgendaEntity> usersAgendaByUsersid = agendaRepository.findByUsersid(usersEntity);
 
-        return Objects.requireNonNullElseGet(usersAgendaByUsersid, ArrayList::new);
+       if (usersAgendaByUsersid == null) {
+           return new HashSet<>();
+       }
+
+       return usersAgendaByUsersid;
     }
 }

@@ -11,10 +11,8 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
-import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import javax.sql.DataSource;
 import java.util.Properties;
 
 /**
@@ -129,7 +127,7 @@ public class SpringDataConfig {
      *  EXPLANATION: Create datasource for database connection and set all required properties for datasource.
      */
     @Bean
-    public DataSource dataSource() {
+    public DriverManagerDataSource driverManagerDataSource() {
         DriverManagerDataSource driverManagerDataSource = new DriverManagerDataSource();
 
         driverManagerDataSource.setDriverClassName(driver);
@@ -164,7 +162,8 @@ public class SpringDataConfig {
      *              with a matching bean in the Spring container.
      */
     @Autowired
-    public LocalContainerEntityManagerFactoryBean localContainerEntityManagerFactoryBean(DataSource dataSource,
+    public LocalContainerEntityManagerFactoryBean localContainerEntityManagerFactoryBean(DriverManagerDataSource
+                                                                                                 dataSource,
                                                                                          Properties properties) {
         LocalContainerEntityManagerFactoryBean localContainerEntityManagerFactoryBean =
                 new LocalContainerEntityManagerFactoryBean();
@@ -188,8 +187,8 @@ public class SpringDataConfig {
      *  ...
      */
     @Autowired
-    public PlatformTransactionManager jpaTransactionManager(LocalContainerEntityManagerFactoryBean
-                                                                    localContainerEntityManagerFactoryBean) {
+    public JpaTransactionManager jpaTransactionManager(LocalContainerEntityManagerFactoryBean
+                                                               localContainerEntityManagerFactoryBean) {
         JpaTransactionManager jpaTransactionManager = new JpaTransactionManager();
 
         jpaTransactionManager.setEntityManagerFactory(localContainerEntityManagerFactoryBean.getObject());

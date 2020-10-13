@@ -6,8 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -45,29 +44,17 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         this.passwordEncoder = passwordEncoder;
     }
 
-    /*
-     *  EXPLANATION: Specify AuthenticationProvider There we set passwordEncoder
-     *              {from our PasswordEncodingConfig class},
-     *              our custom UserDetailsService {JwtUserDetailsService class}.
-     *
-     *  NOTE:        Create a bean out of this method, because we may want to use it somewhere else.
-     */
-    @Bean
-    public AuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
-
-        daoAuthenticationProvider.setPasswordEncoder(passwordEncoder);
-        daoAuthenticationProvider.setUserDetailsService(userDetailsService);
-
-        return daoAuthenticationProvider;
+    @Override
+    public void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
+        authenticationManagerBuilder
+                .userDetailsService(userDetailsService)
+                .passwordEncoder(passwordEncoder);
     }
 
-    /*
-     *  EXPLANATION: Set AuthenticationProvider in AuthenticationManagerBuilder.
-     */
+    @Bean
     @Override
-    protected void configure(AuthenticationManagerBuilder auth) {
-        auth.authenticationProvider(authenticationProvider());
+    public AuthenticationManager authenticationManager() throws Exception {
+        return super.authenticationManager();
     }
 
     @Override
@@ -78,8 +65,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .addFilter(
-                        new JwtUsernamePasswordAuthenticationFilter
-                                (
+                        new JwtUsernamePasswordAuthenticationFilter(
                                         /*
                                          *  NOTE: this method called from WebSecurityConfigurerAdapter class
                                          */
